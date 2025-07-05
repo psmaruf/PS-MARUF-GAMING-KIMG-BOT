@@ -2,7 +2,7 @@ module.exports = {
   config: {
     name: "slot",
     version: "1.4",
-    author: "BaYjid x Xass",
+    author: "BaYjid",
     shortDescription: {
       en: "🎰 Slot with limit & style",
     },
