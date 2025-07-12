@@ -5,26 +5,22 @@ const path = require("path");
 module.exports = {
   config: {
     name: "notice",
-    aliases: ["noti"],
-    version: "2.0",
-    author: "RaHaD",
+    aliases: ["notif"],
+    version: "2.1",
+    author: "RaHaD + Fixed by ChatGPT",
     countDown: 5,
     role: 2,
-    shortDescription: "Send notice + multiple Google Drive videos to all groups",
-    longDescription: "Send notice message with multiple Google Drive videos sequentially to all groups.",
+    shortDescription: "Send notice with video to all groups",
+    longDescription: "Send a notice message with one or more videos to all groups.",
     category: "owner",
     guide: "{pn} <message>",
     envConfig: {
       delayPerGroup: 300
     },
-
-    // Add your Google Drive video links here (in link format)
+    // Replace Google Drive links with working public .mp4 links
     videoLinks: [
-      "https://drive.google.com/file/d/1-ZlKd-Gp3aDYMncf_5G2wSuSLMxEGPSI/view?usp=drivesdk",
-      "https://drive.google.com/file/d/1-nI4xKS6Kmgk535JCJ0ImzWEz27Da8f_/view?usp=drivesdk",
-      "https://drive.google.com/file/d/1-lL4N88ypSZqK-soaeGVB24psIsZCnTW/view?usp=drivesdk",
-      "https://drive.google.com/file/d/1-kJ3l2B8TFSSFU7_ez4b_ZaLTe3DTKUM/view?usp=drivesdk",
-      "https://drive.google.com/file/d/1-e3bORf0AyDhm1riFPQAuGNOu_IObMnu/view?usp=drivesdk"
+      "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+      "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
     ]
   },
 
@@ -50,47 +46,32 @@ module.exports = {
     const groupThreads = allThreads.filter(t => t.isGroup && t.threadID !== event.threadID);
     if (groupThreads.length === 0) return message.reply("❌ No groups found.");
 
-    message.reply(`⏳ Sending notice with ${videoLinks.length} videos to ${groupThreads.length} groups...`);
+    message.reply(`⏳ Sending notice with ${videoLinks.length} video(s) to ${groupThreads.length} groups...`);
 
     // Helper function to download video
-    async function downloadVideo(gdriveLink, index) {
-      const fileIdMatch = gdriveLink.match(/\/d\/([^/]+)\//);
-      if (!fileIdMatch) throw new Error(`Invalid Google Drive link at index ${index}`);
-      const fileId = fileIdMatch[1];
-      const downloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+    async function downloadVideo(link, index) {
       const videoPath = path.join(__dirname, `temp_notice_video_${index}.mp4`);
-
-      const response = await axios({
-        method: "GET",
-        url: downloadUrl,
-        responseType: "stream"
-      });
-
+      const response = await axios.get(link, { responseType: "stream" });
       const writer = fs.createWriteStream(videoPath);
       response.data.pipe(writer);
-
       await new Promise((resolve, reject) => {
         writer.on("finish", resolve);
         writer.on("error", reject);
       });
-
       return videoPath;
     }
 
-    // To pick video for each group in round-robin manner
+    // Round-robin for video selection
     let videoIndex = 0;
-
     let success = 0, failed = [];
 
     for (const { threadID } of groupThreads) {
       try {
-        // Prepare stylish notice text
-        const stylishText = `『 𝗥𝗔𝗛𝗔𝗗 - Official Notice 』\n━━━━━━━━━━━━━━━━━━\n📅 Date & Time: ${timestamp}\n${userMention}\n\n📢 Notice:\n${noticeText}\n━━━━━━━━━━━━━━━━━━\n✅ Admin Announcement - Please Take Action`;
+        const stylishText =
+          `『 𝗥𝗔𝗛𝗔𝗗 - Official Notice 』\n━━━━━━━━━━━━━━━━━━\n📅 Date & Time: ${timestamp}\n${userMention}\n\n📢 Notice:\n${noticeText}\n━━━━━━━━━━━━━━━━━━\n✅ Admin Announcement - Please Take Action`;
 
-        // Download the video
         const videoPath = await downloadVideo(videoLinks[videoIndex], videoIndex);
 
-        // Prepare message with attachment
         const formSend = {
           body: stylishText,
           mentions,
@@ -100,13 +81,9 @@ module.exports = {
         await api.sendMessage(formSend, threadID);
         success++;
 
-        // Delete temp video file
         await fs.remove(videoPath);
-
-        // Move to next video index (round-robin)
         videoIndex = (videoIndex + 1) % videoLinks.length;
 
-        // Wait between sends
         await new Promise(r => setTimeout(r, delayPerGroup));
 
       } catch (err) {
@@ -114,7 +91,7 @@ module.exports = {
       }
     }
 
-    // Send final report
+    // Final report
     const report = `🎉 Done!\n✅ Sent: ${success}\n❌ Failed: ${failed.length}` +
       (failed.length ? "\n" + failed.map(f => `• ${f.id}: ${f.error}`).join("\n") : "");
     message.reply(report);
