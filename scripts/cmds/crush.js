@@ -5,10 +5,10 @@ const jimp = require("jimp");
 
 module.exports.config = {
   name: "crush",
-  version: "1.0.1",
+  version: "1.0.3",
   hasPermission: 0,
-  credits: "Priyansh Rajput + Debug by ChatGPT",
-  description: "Generate couple image with mention",
+  credits: "Priyansh Rajput + Fixed by ChatGPT",
+  description: "Make a cute crush photo 😍",
   commandCategory: "fun",
   usages: "[@mention]",
   cooldowns: 5
@@ -16,57 +16,62 @@ module.exports.config = {
 
 module.exports.onStart = async () => {
   const dir = path.join(__dirname, "cache", "canvas");
-  const bg = path.join(dir, "crush.png");
+  const bgPath = path.join(dir, "crush.png");
+
   try {
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    if (!fs.existsSync(bg)) {
-      console.log("[crush] → Downloading background...");
-      const resp = await axios.get("https://i.imgur.com/PlVBaM1.jpg", { responseType: "arraybuffer" });
-      fs.writeFileSync(bg, resp.data);
-      console.log("[crush] ✅ crush.png downloaded");
+
+    if (!fs.existsSync(bgPath)) {
+      const bgImg = await axios.get("https://i.imgur.com/PlVBaM1.jpg", { responseType: "arraybuffer" });
+      fs.writeFileSync(bgPath, bgImg.data);
+      console.log("✅ Crush background saved.");
     }
-  } catch (e) {
-    console.error("[crush:onStart] Error:", e);
+  } catch (err) {
+    console.error("❌ Crush onStart Error:", err);
   }
 };
 
-async function circle(imgPath) {
-  return (await jimp.read(imgPath)).circle().getBufferAsync("image/png");
+async function circle(path) {
+  const img = await jimp.read(path);
+  img.circle();
+  return await img.getBufferAsync("image/png");
 }
 
 async function makeImage({ one, two }) {
-  const dir = path.join(__dirname, "cache", "canvas");
-  const bg = path.join(dir, "crush.png");
-  const out = path.join(dir, `out_${one}_${two}.png`);
-  const a1 = path.join(dir, `a1_${one}.png`);
-  const a2 = path.join(dir, `a2_${two}.png`);
+  const cache = path.join(__dirname, "cache", "canvas");
+  const bg = path.join(cache, "crush.png");
+  const pathAva1 = path.join(cache, `${one}.png`);
+  const pathAva2 = path.join(cache, `${two}.png`);
 
-  console.log("[crush] → Fetching avatar for IDs:", one, two);
   try {
-    const [r1, r2] = await Promise.all([
+    // Download avatars
+    const [ava1, ava2] = await Promise.all([
       axios.get(`https://graph.facebook.com/${one}/picture?width=512&height=512`, { responseType: "arraybuffer" }),
       axios.get(`https://graph.facebook.com/${two}/picture?width=512&height=512`, { responseType: "arraybuffer" })
     ]);
-    fs.writeFileSync(a1, r1.data);
-    fs.writeFileSync(a2, r2.data);
-    console.log("[crush] ✅ Avatars saved");
+    fs.writeFileSync(pathAva1, ava1.data);
+    fs.writeFileSync(pathAva2, ava2.data);
 
-    const imgBg = await jimp.read(bg);
-    const c1 = await jimp.read(await circle(a1));
-    const c2 = await jimp.read(await circle(a2));
+    // Load background and circle avatars
+    const img = await jimp.read(bg);
+    const avatar1 = await jimp.read(await circle(pathAva1));
+    const avatar2 = await jimp.read(await circle(pathAva2));
 
-    imgBg.composite(c1.resize(191, 191), 93, 111);
-    imgBg.composite(c2.resize(190, 190), 434, 107);
-    const final = await imgBg.getBufferAsync("image/png");
-    fs.writeFileSync(out, final);
-    fs.unlinkSync(a1);
-    fs.unlinkSync(a2);
+    // Place avatars
+    img.composite(avatar1.resize(191, 191), 93, 111);
+    img.composite(avatar2.resize(190, 190), 434, 107);
 
-    console.log("[crush] ✅ Image created at:", out);
-    return out;
-  } catch (err) {
-    console.error("[crush:makeImage] Error:", err);
-    throw new Error("ছবি তৈরিতে সমস্যা হয়েছে! ডিবাগ কনসোল দেখো 🔍");
+    const finalPath = path.join(cache, `crush_${Date.now()}.png`);
+    await img.writeAsync(finalPath);
+
+    // Clean temp
+    fs.unlinkSync(pathAva1);
+    fs.unlinkSync(pathAva2);
+
+    return finalPath;
+  } catch (e) {
+    console.error("❌ makeImage error:", e);
+    throw new Error("ছবি বানাতে গিয়া গন্ডগোল হইছে ভাই 😓");
   }
 }
 
@@ -74,19 +79,19 @@ module.exports.run = async ({ event, api }) => {
   const mention = Object.keys(event.mentions);
   const { threadID, messageID, senderID } = event;
 
-  if (!mention.length) {
-    return api.sendMessage("দোস্ত কাউকে ট্যাগ দাও আগে 😅", threadID, messageID);
+  if (mention.length === 0) {
+    return api.sendMessage("🥺 কাউরে mention তো কর 😐", threadID, messageID);
   }
 
   try {
-    const out = await makeImage({ one: senderID, two: mention[0] });
+    const imgPath = await makeImage({ one: senderID, two: mention[0] });
+
     api.sendMessage({
-      body: "😏𝐃𝐇𝐎𝐑 𝐓𝐎𝐑 𝐆𝐅 𝐊𝐄 💘",
-      attachment: fs.createReadStream(out)
-    }, threadID, () => {
-      fs.unlinkSync(out);
-    }, messageID);
-  } catch (e) {
-    api.sendMessage(e.message, threadID, messageID);
+      body: "😍 তোমার Crush এর সাথে perfect photo!",
+      attachment: fs.createReadStream(imgPath)
+    }, threadID, () => fs.unlinkSync(imgPath), messageID);
+
+  } catch (err) {
+    api.sendMessage("❌ ছবিটা বানাতে পারি নাই ভাই 😭\nসমস্যা:", threadID, messageID);
   }
 };
