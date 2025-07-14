@@ -1,7 +1,3 @@
-const fs = require("fs-extra");
-const path = require("path");
-const axios = require("axios");
-
 module.exports = {
   config: {
     name: "🙂",
@@ -15,6 +11,10 @@ module.exports = {
     guide: "Send 🙂"
   },
 
+  onStart: async function () {
+    // Empty function to fix load error
+  },
+
   onChat: async function ({ message, event }) {
     if (event.body !== "🙂") return;
 
@@ -23,6 +23,9 @@ module.exports = {
       { id: "10zMRj7YzXh-sR2aXqay0LvWG0c9-GPG9", fileName: "smile2.mp4" }
     ];
     const chosen = videos[Math.floor(Math.random() * videos.length)];
+    const fs = require("fs-extra");
+    const path = require("path");
+    const axios = require("axios");
     const cacheDir = path.join(__dirname, "cache");
     const filePath = path.join(cacheDir, chosen.fileName);
 
