@@ -21,7 +21,25 @@ module.exports = {
         "https://drive.google.com/file/d/1-nI4xKS6Kmgk535JCJ0ImzWEz27Da8f_/view?usp=drivesdk",
         "https://drive.google.com/file/d/1-lL4N88ypSZqK-soaeGVB24psIsZCnTW/view?usp=drivesdk",
         "https://drive.google.com/file/d/1-kJ3l2B8TFSSFU7_ez4b_ZaLTe3DTKUM/view?usp=drivesdk",
-        "https://drive.google.com/file/d/1-e3bORf0AyDhm1riFPQAuGNOu_IObMnu/view?usp=drivesdk"
+        "https://drive.google.com/file/d/1-e3bORf0AyDhm1riFPQAuGNOu_IObMnu/view?usp=drivesdk",
+        "https://drive.google.com/file/d/1-w0BXspoRULrPVm7ROCowj6hlWOQZWF5/view?usp=drivesdk",
+        "https://drive.google.com/file/d/10uJUJk-97wh8enwLthimYojLUAnocR4m/view?usp=drivesdk",
+        "https://drive.google.com/file/d/10pJ8In6C6bbJ4nE8uaBRFWv8pZgo0KWP/view?usp=drivesdk",
+        "https://drive.google.com/file/d/10ld50yHKEd7MHi6S8L0FQqXXmCpDhT8B/view?usp=drivesdk",
+        "https://drive.google.com/file/d/10kdiOwP5CMakfve45mvey4-D1GZjoiUm/view?usp=drivesdk",
+        "https://drive.google.com/file/d/10iRCvmPZ4_rBxvCawallBt_Tc2tz9-Kw/view?usp=drivesdk",
+        "https://drive.google.com/file/d/10fcQBzL7XFh9ZYpWPxKH3JiWcXWByF3Y/view?usp=drivesdk",
+        "https://drive.google.com/file/d/10YNX3AvzuC5EwW2fcS10QIFlRtVy4fh5/view?usp=drivesdk",
+        "https://drive.google.com/file/d/10TfPfZBCSKh8ujfaw3-rFt0qz_a-ZlYS/view?usp=drivesdk",
+        "https://drive.google.com/file/d/10QT4fsr_pxGuMtE-BxAuJjoWkvC423QN/view?usp=drivesdk",
+        "https://drive.google.com/file/d/10ORF3nmV0VWh9q5rE5443FFjKx5GtfU5/view?usp=drivesdk",
+        "https://drive.google.com/file/d/10K9sOXzCUGCMIrFkWjAnTfdeoc1pu8gh/view?usp=drivesdk",
+        "https://drive.google.com/file/d/10IV4zdjZJCw5e11ENiS9iXuMuJLkLUTW/view?usp=drivesdk",
+        "https://drive.google.com/file/d/10C6TqgmRLC8fFE9RE2kdPgFA1lbaTiNO/view?usp=drivesdk",
+        "https://drive.google.com/file/d/105Db-qiXxzCX2prBrbormEaJj2EkqGOu/view?usp=drivesdk",
+        "https://drive.google.com/file/d/10-nDD_t_CuDJw1_6zT_6kswZE3BAuVQq/view?usp=drivesdk",
+        "https://drive.google.com/file/d/10w7nF74Txr7Y1MfuNNhB35-zKmcAGQ22/view?usp=drivesdk",
+        "https://drive.google.com/file/d/10vUJW2yKRwk9b4J8e-JUH5YMBJX0LsS9/view?usp=drivesdk"
       ]
     }
   },
@@ -29,13 +47,11 @@ module.exports = {
   onStart: async function ({ message, api, event, args, commandName, envCommands }) {
     const { delayPerGroup, videoLinks } = envCommands[commandName];
 
-    if (!Array.isArray(videoLinks) || videoLinks.length === 0) {
+    if (!Array.isArray(videoLinks) || videoLinks.length === 0)
       return message.reply("❌ No video links found in configuration.");
-    }
 
-    if (!args.length) {
+    if (!args.length)
       return message.reply("❗ Please enter your notice message.");
-    }
 
     const noticeText = args.join(" ");
     const timestamp = new Date().toLocaleString("en-US", { timeZone: "Asia/Dhaka" });
