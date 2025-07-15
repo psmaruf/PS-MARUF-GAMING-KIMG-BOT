@@ -1,3 +1,4 @@
+
 const axios = require("axios");
 const fs = require("fs-extra");
 const path = require("path");
@@ -67,26 +68,28 @@ module.exports = {
       const selected = members.sort(() => 0.5 - Math.random()).slice(0, 25);
 
       for (const uid of selected) {
-        const url = `https://graph.facebook.com/${uid}/picture?width=512&height=512&access_token=6628568379%7Cc1e620fa708a1c2b1ab3e4c5b2c6`;
-        const res = await axios.get(url, { responseType: "arraybuffer" });
-        const rounded = await circle(res.data);
-        const img = await Canvas.loadImage(rounded);
-        ctx.drawImage(img, x, y, avatarSize, avatarSize);
+        try {
+          const url = `https://graph.facebook.com/${uid}/picture?width=512&height=512&access_token=6628568379%7Cc1e620fa708a1c2b1ab3e4c5b2c6`;
+          const res = await axios.get(url, { responseType: "arraybuffer" });
+          const rounded = await circle(res.data);
+          const img = await Canvas.loadImage(rounded);
+          ctx.drawImage(img, x, y, avatarSize, avatarSize);
 
-        // Admin border
-        if (admins.includes(uid)) {
-          ctx.strokeStyle = "gold";
-          ctx.lineWidth = 6;
-          ctx.beginPath();
-          ctx.arc(x + avatarSize / 2, y + avatarSize / 2, avatarSize / 2 + 3, 0, Math.PI * 2);
-          ctx.stroke();
-        }
-
-        x += avatarSize + padding;
-        count++;
-        if (count % 5 === 0) {
-          x = 70;
-          y += avatarSize + padding;
+          if (admins.includes(uid)) {
+            ctx.strokeStyle = "gold";
+            ctx.lineWidth = 6;
+            ctx.beginPath();
+            ctx.arc(x + avatarSize / 2, y + avatarSize / 2, avatarSize / 2 + 3, 0, Math.PI * 2);
+            ctx.stroke();
+          }
+          x += avatarSize + padding;
+          count++;
+          if (count % 5 === 0) {
+            x = 70;
+            y += avatarSize + padding;
+          }
+        } catch (avatarErr) {
+          console.warn(`Failed to load avatar for ${uid}:`, avatarErr.message);
         }
       }
 
@@ -98,14 +101,17 @@ module.exports = {
 
       out.on("finish", () => {
         api.sendMessage({
-          body: `✅ Group Card Generated\n📛 Title: ${title}\n👥 Members: ${members.length}\n👑 Admins: ${admins.length}`,
+          body: `âœ… Group Card Generated
+ðŸ“› Title: ${title}
+ðŸ‘¥ Members: ${members.length}
+ðŸ‘‘ Admins: ${admins.length}`,
           attachment: fs.createReadStream(outputPath),
         }, threadID, () => fs.unlinkSync(outputPath), messageID);
       });
 
     } catch (err) {
-      console.error(err);
-      api.sendMessage("❌ Failed to generate group card. Please try again later.", event.threadID, event.messageID);
+      console.error("Taoanhbox error:", err);
+      api.sendMessage("âŒ Failed to generate group card. Please try again later.", event.threadID, event.messageID);
     }
   },
 };
