@@ -24,7 +24,7 @@ module.exports.circle = async (image) => {
   return await image.getBufferAsync("image/png");
 };
 
-module.exports.run = async ({ event, api, args }) => {
+module.exports.onStart = async function ({ event, api, args }) {
   const fs = global.nodemodule["fs-extra"];
   const axios = global.nodemodule["axios"];
   const jimp = global.nodemodule["jimp"];
