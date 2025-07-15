@@ -15,7 +15,7 @@ module.exports.config = {
   cooldowns: 10
 };
 
-module.exports.run = async function ({ api, event }) {
+module.exports.onStart = async function ({ api, event }) {
   const threadID = event.threadID;
   const { participantIDs, threadName, adminIDs } = await api.getThreadInfo(threadID);
   const allMembers = participantIDs.slice(0, 30); // limit for performance
