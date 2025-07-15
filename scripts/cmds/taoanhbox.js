@@ -1,107 +1,131 @@
+module.exports.config = {
+  name: "taoanhbox",
+  version: "1.0.0",
+  hasPermssion: 0,
+  credits: "shion - modified by Bayjid & ChatGPT",
+  description: "Create an image of all members in the group chat",
+  commandCategory: "group",
+  usages: "taoanhbox [size] [#hexcolor] [title]",
+  cooldowns: 5,
+  dependencies: {
+    "fs-extra": "",
+    "axios": "",
+    "canvas": "",
+    "jimp": "",
+    "node-superfetch": "",
+    "chalk": ""
+  }
+};
 
-const axios = require("axios");
-const fs = require("fs-extra");
-const path = require("path");
-const jimp = require("jimp");
-const Canvas = require("canvas");
+module.exports.circle = async (image) => {
+  const jimp = global.nodemodule["jimp"];
+  image = await jimp.read(image);
+  image.circle();
+  return await image.getBufferAsync("image/png");
+};
 
-module.exports = {
-  config: {
-    name: "taoanhbox",
-    aliases: ["groupcard"],
-    version: "1.4",
-    author: "Bayjid x ChatGPT",
-    countDown: 5,
-    role: 0,
-    shortDescription: "Generate group image card",
-    longDescription: "Creates a stylish group card with avatars and titles",
-    category: "group",
-    guide: "+taoanhbox [optional title]",
-  },
+module.exports.run = async ({ event, api, args }) => {
+  const fs = global.nodemodule["fs-extra"];
+  const axios = global.nodemodule["axios"];
+  const jimp = global.nodemodule["jimp"];
+  const Canvas = global.nodemodule["canvas"];
+  const superfetch = global.nodemodule["node-superfetch"];
+  const { threadID, messageID } = event;
+  const img = new Canvas.Image();
 
-  onStart: async function ({ api, event, args }) {
+  let live = [], admin = [], i = 0;
+
+  if (args[0] === "help" || args[0] === "0" || args[0] === "-h") {
+    return api.sendMessage(
+      `📌 Usage: taoanhbox <size> <#color> <title>\n` +
+      `- size: avatar size\n` +
+      `- #color: text color in hex (optional)\n` +
+      `- title: image title (optional)\n\n` +
+      `🧪 Example: taoanhbox 200 #ffffff Family Forever\nIf blank, defaults will be used.`,
+      threadID, messageID
+    );
+  }
+
+  // FONT
+  const fontPath = __dirname + `/cache/data/TUVBenchmark.ttf`;
+  if (!fs.existsSync(fontPath)) {
+    const fontData = (await axios.get(`https://drive.google.com/u/0/uc?id=1NIoSu00tStE8bIpVgFjWt2in9hkiIzYz&export=download`, { responseType: "arraybuffer" })).data;
+    fs.outputFileSync(fontPath, Buffer.from(fontData, "utf-8"));
+  }
+
+  // BACKGROUND
+  const backgrounds = [
+    'https://i.imgur.com/P3QrAgh.jpg',
+    'https://i.imgur.com/RueGAGI.jpg',
+    'https://i.imgur.com/bwMjOdp.jpg',
+    'https://i.imgur.com/trR9fNf.jpg'
+  ];
+  const background = await Canvas.loadImage(backgrounds[Math.floor(Math.random() * backgrounds.length)]);
+  const frame = await Canvas.loadImage("https://i.imgur.com/gYxZFzx.png");
+  const bgX = background.width, bgY = background.height;
+  const canvas = Canvas.createCanvas(bgX, bgY);
+  const ctx = canvas.getContext("2d");
+  ctx.drawImage(background, 0, 0, bgX, bgY);
+
+  // GROUP INFO
+  const { participantIDs, adminIDs, name, userInfo } = await api.getThreadInfo(threadID);
+  for (let ad of adminIDs) admin.push(ad.id);
+  for (let user of userInfo) if (user.gender !== undefined) live.push(user);
+
+  // SIZE / COLOR / TITLE SETUP
+  const totalArea = bgX * (bgY - 200);
+  const autoSize = Math.floor(Math.sqrt(Math.floor(totalArea / live.length)));
+  const size = args[0] ? parseInt(args[0]) : autoSize;
+  const color = args[1] || '#ffffff';
+  const title = args.slice(2).join(" ") || name;
+
+  let padding = parseInt(size / 15), x = padding, y = 200;
+  const realSize = size - padding * 2;
+  const cropWidth = live.length * realSize;
+  let cropHeight = y + realSize;
+
+  api.sendMessage(
+    `📸 Generating image for ${participantIDs.length} members...\n🖼️ Background: ${bgX}x${bgY}\n👤 Avatar size: ${realSize}\n🎨 Text color: ${color}`,
+    threadID, messageID
+  );
+
+  const path = __dirname + `/cache/${Date.now() + 10000}.png`;
+
+  for (let user of live) {
     try {
-      const threadID = event.threadID;
-      const messageID = event.messageID;
-      const threadInfo = await api.getThreadInfo(threadID);
-      const members = threadInfo.participantIDs;
-      const admins = threadInfo.adminIDs.map(e => e.id);
-      const title = args.join(" ") || threadInfo.threadName || "Group Card";
-
-      const cacheDir = path.join(__dirname, "cache", "data");
-      fs.ensureDirSync(cacheDir);
-
-      const fontPath = path.join(cacheDir, "UTM-Avo.ttf");
-      if (!fs.existsSync(fontPath)) {
-        const fontUrl = "https://github.com/lamdaVn/font/raw/main/UTM-Avo.ttf";
-        const fontRes = await axios.get(fontUrl, { responseType: "arraybuffer" });
-        fs.writeFileSync(fontPath, Buffer.from(fontRes.data));
+      const avatarRes = await superfetch.get(`https://graph.facebook.com/${user.id}/picture?height=720&width=720&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`);
+      if (x + realSize > bgX) {
+        x = padding;
+        y += realSize + padding;
+        cropHeight += realSize + padding;
       }
+      if (cropHeight > bgY) break;
 
-      Canvas.registerFont(fontPath, { family: "UTM-Avo" });
-
-      const canvas = Canvas.createCanvas(1500, 800);
-      const ctx = canvas.getContext("2d");
-      ctx.fillStyle = "#1e1e2e";
-      ctx.fillRect(0, 0, 1500, 800);
-
-      ctx.font = "bold 50px UTM-Avo";
-      ctx.fillStyle = "#ffffff";
-      ctx.textAlign = "center";
-      ctx.fillText(title, 750, 70);
-
-      const circle = async (buffer) => {
-        const img = await jimp.read(buffer);
-        img.circle();
-        return await img.getBufferAsync("image/png");
-      };
-
-      const avatarSize = 130;
-      const padding = 30;
-      let x = 70, y = 120, count = 0;
-      const selected = members.sort(() => 0.5 - Math.random()).slice(0, 25);
-
-      for (const uid of selected) {
-        try {
-          const url = `https://graph.facebook.com/${uid}/picture?width=512&height=512&access_token=6628568379%7Cc1e620fa708a1c2b1ab3e4c5b2c6`;
-          const res = await axios.get(url, { responseType: "arraybuffer" });
-          const rounded = await circle(res.data);
-          const img = await Canvas.loadImage(rounded);
-          ctx.drawImage(img, x, y, avatarSize, avatarSize);
-
-          if (admins.includes(uid)) {
-            ctx.strokeStyle = "gold";
-            ctx.lineWidth = 6;
-            ctx.beginPath();
-            ctx.arc(x + avatarSize / 2, y + avatarSize / 2, avatarSize / 2 + 3, 0, Math.PI * 2);
-            ctx.stroke();
-          }
-          x += avatarSize + padding;
-          count++;
-          if (count % 5 === 0) {
-            x = 70;
-            y += avatarSize + padding;
-          }
-        } catch (_) {}
-      }
-
-      const outputPath = path.join(cacheDir, `group_card_${Date.now()}.png`);
-      const out = fs.createWriteStream(outputPath);
-      const stream = canvas.createPNGStream();
-      stream.pipe(out);
-
-      out.on("finish", () => {
-        api.sendMessage({
-          body: `âœ… Group Card Created!
-ðŸ“› Title: ${title}
-ðŸ‘¥ Members: ${members.length}
-ðŸ‘‘ Admins: ${admins.length}`,
-          attachment: fs.createReadStream(outputPath),
-        }, threadID, () => fs.unlinkSync(outputPath), messageID);
-      });
-
-    } catch (err) {
-      api.sendMessage("âŒ Error: Could not generate group card. Make sure required modules are installed.", event.threadID, event.messageID);
+      const circleAvatar = await module.exports.circle(avatarRes.body);
+      const avatarImage = await Canvas.loadImage(circleAvatar);
+      ctx.drawImage(avatarImage, x, y, realSize, realSize);
+      if (admin.includes(user.id)) ctx.drawImage(frame, x, y, realSize, realSize);
+      x += realSize + padding;
+      i++;
+    } catch (e) {
+      continue;
     }
-  },
+  }
+
+  // TITLE TEXT
+  Canvas.registerFont(fontPath, { family: "TUVBenchmark" });
+  ctx.font = "100px TUVBenchmark";
+  ctx.fillStyle = color;
+  ctx.textAlign = "center";
+  ctx.fillText(decodeURIComponent(title), cropWidth / 2, 133);
+
+  const cut = await jimp.read(canvas.toBuffer());
+  cut.crop(0, 0, cropWidth, cropHeight + padding - 30).writeAsync(path);
+  await new Promise(r => setTimeout(r, 300));
+
+  return api.sendMessage({
+    body:
+      `✅ Group image created!\n👥 Members rendered: ${i}\n🗑️ Skipped: ${participantIDs.length - i}`,
+    attachment: fs.createReadStream(path)
+  }, threadID, () => fs.unlinkSync(path), messageID);
 };
