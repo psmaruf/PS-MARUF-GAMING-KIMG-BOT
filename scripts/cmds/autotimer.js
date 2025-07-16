@@ -1,125 +1,95 @@
 module.exports.config = {
   name: "autotimer",
-  version: "2.0",
+  version: "4.0",
   role: 0,
-  author: "Dipto",
-  description: "সেট করা সময় অনুযায়ী স্বয়ংক্রিয়ভাবে বার্তাগুলি পাঠানো হবে!",
+  author: "Bayjid x ChatGPT",
+  description: "Send hourly messages with stylish text and different videos (BD Time)",
   category: "AutoTime",
-  countDown: 3,
+  countDown: 5,
+};
+
+const videoMap = {
+  0: "13opJkICUIzLTSFCjZg3ksIRqRR6530QH",
+  1: "13y1WQ1SgDexQmCOhUrWd9VWZutKyOmM2",
+  2: "13yp6fQ67gb0GgnJXRGCfbW9C-9pY1cR8",
+  3: "142JD_gs1B-FZf4mk4opw-UylES01-4yc",
+  4: "13oTsTt9vhWp1UGNuZYsDnVlMo85Wx50D"
+  // Add more hours with corresponding video IDs
 };
 
 module.exports.onLoad = async ({ api }) => {
-  const timerData = {
-    "12:00:00 PM": {
-      message: "This is an auto schedule message at 12:00 PM 🌞 🌟",
-    },
-    "01:00:00 AM": {
-      message: "This is an auto schedule message at 01:00 AM 🌜 🌟",
-    },
-    "02:00:00 AM": {
-      message: "This is an auto schedule message at 02:00 AM 🌜 🌟",
-    },
-    "03:00:00 AM": {
-      message: "This is an auto schedule message at 03:00 AM 🌜 🌟",
-    },
-    "04:00:00 AM": {
-      message: "This is an auto schedule message at 04:00 AM 🌜 🌟",
-    },
-    "05:00:00 AM": {
-      message: "This is an auto schedule message at 05:00 AM 🌜 🌟",
-    },
-    "06:00:00 AM": {
-      message: "This is an auto schedule message at 06:00 AM 🌜 🌟",
-    },
-    "07:00:00 AM": {
-      message: "This is an auto schedule message at 07:00 AM 🌜 🌟",
-    },
-    "08:00:00 AM": {
-      message: "This is an auto schedule message at 08:00 AM 🌜 🌟",
-    },
-    "09:00:00 AM": {
-      message: "This is an auto schedule message at 09:00 AM 🌜 🌟",
-    },
-    "10:00:00 AM": {
-      message: "This is an auto schedule message at 10:00 AM 🌞 🌟",
-    },
-    "11:00:00 AM": {
-      message: "This is an auto schedule message at 11:00 AM 🌞 🌟",
-    },
-    "01:00:00 PM": {
-      message: "This is an auto schedule message at 01:00 PM 🌞 🌟",
-    },
-    "02:00:00 PM": {
-      message: "This is an auto schedule message at 02:00 PM 🌞 🌟",
-    },
-    "03:00:00 PM": {
-      message: "This is an auto schedule message at 03:00 PM 🌞 🌟",
-    },
-    "04:00:00 PM": {
-      message: "This is an auto schedule message at 04:00 PM 🌞 🌟",
-    },
-    "05:00:00 PM": {
-      message: "This is an auto schedule message at 05:00 PM 🌞 🌟",
-    },
-    "06:00:00 PM": {
-      message: "This is an auto schedule message at 06:00 PM 🌞 🌟",
-    },
-    "07:00:00 PM": {
-      message: "This is an auto schedule message at 07:00 PM 🌜 🌟",
-    },
-    "08:00:00 PM": {
-      message: "This is an auto schedule message at 08:00 PM 🌜 🌟",
-    },
-    "09:00:00 PM": {
-      message: "This is an auto schedule message at 09:00 PM 🌜 🌟",
-    },
-    "10:00:00 PM": {
-      message: "This is an auto schedule message at 10:00 PM 🌜 🌟",
-    },
-    "11:00:00 PM": {
-      message: "This is an auto schedule message at 11:00 PM 🌜 🌟",
+  const templates = {
+    all: `
+┏━━━━━━━━━━━━━━━💫━━━━━━━━━━━━━━━┓
+┃ 🕰️ 𝙏𝙞𝙢𝙚: 〔 {TIME} 〕
+┃ 💬 𝙂𝙧𝙤𝙪𝙥: {GROUP}
+┃ ✨ {GREETING}
+┃ 💡 𝙏𝙞𝙥: 𝙎𝙩𝙖𝙮 𝙥𝙤𝙨𝙞𝙩𝙞𝙫𝙚, 𝙨𝙩𝙖𝙮 𝙛𝙤𝙘𝙪𝙨𝙚𝙙!
+┗━━━━━━━━━━━━━━━🌙━━━━━━━━━━━━━━━┛
+🎯 🚀 🔥 𝑪𝒐𝒏𝒒𝒖𝒆𝒓 𝒚𝒐𝒖𝒓 𝒉𝒐𝒖𝒓!
+`,
+  };
+
+  const greetingForHour = (h) => {
+    if (h >= 0 && h < 5)
+      return "🌌 𝑴𝒊𝒅𝒏𝒊𝒈𝒉𝒕 𝑺𝒆𝒓𝒆𝒏𝒊𝒕𝒚 ~ 𝑻𝒊𝒎𝒆 𝒕𝒐 𝒓𝒆𝒔𝒕 💭🛌";
+    if (h >= 5 && h < 8)
+      return "🌄 𝑹𝒊𝒔𝒆 & 𝑺𝒉𝒊𝒏𝒆! 𝑨 𝒏𝒆𝒘 𝒅𝒂𝒚 𝒃𝒆𝒈𝒊𝒏𝒔 ✨☕";
+    if (h >= 8 && h < 12)
+      return "🌞 𝑮𝒐𝒐𝒅 𝑴𝒐𝒓𝒏𝒊𝒏𝒈! 𝑺𝒕𝒂𝒚 𝒑𝒓𝒐𝒅𝒖𝒄𝒕𝒊𝒗𝒆 🚀📚";
+    if (h >= 12 && h < 14)
+      return "🌤️ 𝑰𝒕'𝒔 𝑴𝒊𝒅𝒅𝒂𝒚! 𝑲𝒆𝒆𝒑 𝒈𝒐𝒊𝒏𝒈 💪🍱";
+    if (h >= 14 && h < 17)
+      return "🌼 𝑨𝒇𝒕𝒆𝒓𝒏𝒐𝒐𝒏 𝑭𝒐𝒄𝒖𝒔 𝑴𝒐𝒅𝒆 𝑶𝑵 🎯📈";
+    if (h >= 17 && h < 19)
+      return "🌇 𝑬𝒗𝒆𝒏𝒊𝒏𝒈 𝑮𝒍𝒐𝒘 𝑻𝒊𝒎𝒆! 𝑹𝒆𝒍𝒂𝒙 & 𝑹𝒆𝒔𝒆𝒕 🌿📖";
+    if (h >= 19 && h < 22)
+      return "🌃 𝑷𝒆𝒂𝒄𝒆𝒇𝒖𝒍 𝑵𝒊𝒈𝒉𝒕𝒇𝒂𝒍𝒍 ~ 𝑺𝒕𝒂𝒚 𝒄𝒂𝒍𝒎 😌🌙";
+    return "🌙 𝑳𝒂𝒕𝒆 𝑵𝒊𝒈𝒉𝒕 𝑴𝒐𝒅𝒆. 𝑺𝒘𝒆𝒆𝒕 𝒅𝒓𝒆𝒂𝒎𝒔 🛌⭐";
+  };
+
+  const getVideoStream = async (id) => {
+    const url = `https://drive.google.com/uc?export=download&id=${id}`;
+    try {
+      return await global.utils.getStreamFromURL(url);
+    } catch (e) {
+      console.error("❌ Video fetch failed:", e.message);
+      return null;
     }
   };
 
-  // 🎥 র‍্যান্ডম ভিডিও লিস্ট (attachment ID format বা Buffer stream format ব্যবহার করা যাবে)
-  const videoURLs = [
-    "https://drive.google.com/uc?export=download&id=10fnG0B9mjJm7kiOfhCmxaWJAnO6byg7h",
-    "https://drive.google.com/uc?export=download&id=10bLixrdA5AMDX_ghc0gh2KrNqFnlXCWt",
-    "https://drive.google.com/uc?export=download&id=10yCXj_k-vQ3JZ4CDBI47q1QAGStgqGGf",
-    "https://drive.google.com/uc?export=download&id=10tylA-0PZt29bEwbMQliFJRLyNgpUSPy",
-    "https://drive.google.com/uc?export=download&id=10sOdM79rUWrUCUTt2bshWk5UJjDFZuzB",
-    "https://drive.google.com/uc?export=download&id=10igHuFfPMYdAXE5jHJg7E1Bg_EmNbsxp",
-    "https://drive.google.com/uc?export=download&id=10hN25pp9xP3ta7-nRxqRDeqRDYSQsi8t"
-  ];
+  const checkAndSend = async () => {
+    const now = new Date(Date.now() + 21600000);
+    const hour = now.getHours();
+    const timeStr = now.toLocaleTimeString('en-GB', {
+      hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+    });
+    const boxedTime = `【 ${timeStr} 】`;
+    const greeting = greetingForHour(hour);
+    const threads = global.GoatBot.config.whiteListModeThread?.whiteListThreadIds || [];
+    const attachment = videoMap[hour] ? await getVideoStream(videoMap[hour]) : null;
 
-  const checkTimeAndSendMessage = async () => {
-    const currentTime = new Date(Date.now() + 21600000).toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: true
-    }).split(',').pop().trim();
-
-    if (timerData[currentTime]) {
-      const randomURL = videoURLs[Math.floor(Math.random() * videoURLs.length)];
+    for (const threadID of threads) {
       try {
-        const attachment = await global.utils.getStreamFromURL(randomURL);
-
-        global.GoatBot.config.whiteListModeThread.whiteListThreadIds.forEach(async threadID => {
-          await api.sendMessage({
-            body: timerData[currentTime].message,
-            attachment
-          }, threadID);
-        });
-      } catch (e) {
-        console.error("❌ ভিডিও আনতে সমস্যা:", e);
+        const info = await api.getThreadInfo(threadID);
+        const groupName = info.threadName || "Group";
+        const msg = templates.all
+          .replace("{TIME}", boxedTime)
+          .replace("{GROUP}", groupName)
+          .replace("{GREETING}", greeting);
+        await api.sendMessage({ body: msg, attachment }, threadID);
+      } catch (err) {
+        console.error(`❌ Failed to send to ${threadID}:`, err.message);
       }
     }
 
-    setTimeout(checkTimeAndSendMessage, 1200 - new Date().getMilliseconds());
+    const nextHour = new Date(now);
+    nextHour.setMinutes(0, 0, 0);
+    nextHour.setHours(hour + 1);
+    setTimeout(checkAndSend, nextHour - now);
   };
 
-  checkTimeAndSendMessage();
+  checkAndSend();
 };
 
-module.exports.onStart = ({}) => {};
+module.exports.onStart = () => {}; 
