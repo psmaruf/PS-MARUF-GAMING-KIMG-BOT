@@ -2,7 +2,7 @@ module.exports = {
  config: {
 	 name: "fuck you",
 	 version: "1.0",
-	 author: "BaYjid",
+	 author: "AceGun",
 	 countDown: 5,
 	 role: 0,
 	 shortDescription: "no prefix",
