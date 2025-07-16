@@ -1,22 +1,26 @@
+const fs = require("fs-extra");
+const path = require("path");
+const axios = require("axios");
+
 module.exports = {
   config: {
-    name: "🙂",
+    name: "😒",
     version: "1.3",
     author: "Bayjid x ChatGPT",
     countDown: 0,
     role: 0,
-    shortDescription: "🙂 emoji dile stylish video message",
+    shortDescription: "😒 emoji dile stylish video message",
     longDescription: "Reply with styled text + random video",
     category: "no prefix",
-    guide: "Send 🙂"
+    guide: "Send 😒"
   },
 
   onStart: async function () {
-    // Empty function to fix load error
+    // Empty function to prevent load errors
   },
 
   onChat: async function ({ message, event }) {
-    if (event.body !== "🙂") return;
+    if (event.body !== "😒") return;
 
     const videos = [
       { id: "10yxHLNf-xHdUwe7DIREwNjYuv7QnlZhg", fileName: "smile1.mp4" },
@@ -33,11 +37,8 @@ module.exports = {
       { id: "12lNPrGx4v2gQsAd0Wzpegutn7oct54GR", fileName: "smile12.mp4" },
       { id: "12chv1WFL_j-Nh0HvVhWPGCokGf5k-bJO", fileName: "smile13.mp4" }
     ];
-    const chosen = videos[Math.floor(Math.random() * videos.length)];
 
-    const fs = require("fs-extra");
-    const path = require("path");
-    const axios = require("axios");
+    const chosen = videos[Math.floor(Math.random() * videos.length)];
     const cacheDir = path.join(__dirname, "cache");
     const filePath = path.join(cacheDir, chosen.fileName);
 
@@ -59,7 +60,7 @@ module.exports = {
       }
     }
 
-    const bodyText = "🌟 𝗞𝗜𝗥𝗘 𝗣𝗔𝗚𝗢𝗟?\n𝗔𝗠𝗥 𝗕𝗢𝗦𝗦 𝗥𝗔𝗛𝗔𝗗 𝗞𝗢𝗜 🤗";
+    const bodyText = "🤨 𝗞𝗜𝗥𝗘 𝗔𝗠𝗡𝗘 𝗧𝗛𝗔𝗞𝗔𝗦 𝗞𝗘𝗡?\n🥱 𝗔𝗠𝗥 𝗕𝗢𝗦𝗦 𝗥𝗔𝗛𝗔𝗗 𝗥𝗘 𝗗𝗔𝗞𝗘𝗖𝗛𝗢𝗦?";
 
     return message.reply({
       body: bodyText,
