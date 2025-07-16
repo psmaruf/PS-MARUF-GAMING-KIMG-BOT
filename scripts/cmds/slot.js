@@ -1,101 +1,96 @@
 module.exports = {
   config: {
     name: "slot",
-    version: "1.4",
-    author: "BaYjid",
-    shortDescription: {
-      en: "🎰 Slot with limit & style",
-    },
-    longDescription: {
-      en: "Try your luck with 20 spins every 24 hours. Big flex if you jackpot 💎",
+    version: "1.5",
+    author: "Mostakim",
+    description: {
+      role: 2,
+      en: "Playing slot game",
     },
     category: "Game",
   },
-
   langs: {
     en: {
-      invalid_amount: "❌ Type a real number, genius.",
-      spin_message: "🎲 Pulling the lever... let's roll!",
-      win_message: "🤑 You just earned $%1!",
-      lose_message: "💀 You lost $%1. Ouch.",
-      jackpot_message: "💎💥 JACKPOT!!! You won $%1 with three %2s!",
-      balance_message: "💰 Balance: $%1",
-      spin_limit_reached: "⛔ Max 20 spins used. Try again in %1h %2m %3s.",
-      spins_left: "🎮 Spins left: %1/20",
+      invalid_amount: "Enter a valid amount of money to play",
+      not_enough_money: "Check your balance if you have that amount",
+      win_message: "You won $%1!",
+      lose_message: "You lost $%1!",
+      jackpot_message: "JACKPOT!! You won $%1 for five %2 symbols!",
     },
   },
-
   onStart: async function ({ args, message, event, usersData, getLang }) {
     const { senderID } = event;
     const userData = await usersData.get(senderID);
-    const bet = parseInt(args[0]);
-    const now = Date.now();
+    const amount = parseInt(args[0]);
 
-    if (isNaN(bet) || bet <= 0) return message.reply(getLang("invalid_amount"));
-    if (bet > userData.money) return; // 😶 No msg if broke
-
-    const spinData = userData.data?.slotSpin || { count: 0, resetTime: now };
-
-    // Reset if 24h passed
-    if (now - spinData.resetTime >= 86400000) {
-      spinData.count = 0;
-      spinData.resetTime = now;
+    if (isNaN(amount) || amount <= 0) {
+      return message.reply(getLang("invalid_amount"));
     }
 
-    // Spin limit check
-    if (spinData.count >= 20) {
-      const wait = 86400000 - (now - spinData.resetTime);
-      const h = Math.floor(wait / 3600000);
-      const m = Math.floor((wait % 3600000) / 60000);
-      const s = Math.floor((wait % 60000) / 1000);
-      return message.reply(getLang("spin_limit_reached").replace("%1", h).replace("%2", m).replace("%3", s));
+    if (amount > userData.money) {
+      return message.reply(getLang("not_enough_money"));
     }
 
-    await message.reply(getLang("spin_message"));
+    const slots = ["💚", "🧡", "❤️", "💜", "💙", "💛"];
+    const slot1 = slots[Math.floor(Math.random() * slots.length)];
+    const slot2 = slots[Math.floor(Math.random() * slots.length)];
+    const slot3 = slots[Math.floor(Math.random() * slots.length)];
+    const slot4 = slots[Math.floor(Math.random() * slots.length)];
+    const slot5 = slots[Math.floor(Math.random() * slots.length)];
 
-    const slots = ["🍒", "🍋", "💎", "💚", "⭐", "💛", "💙"];
-    const [a, b, c] = Array(3).fill().map(() => slots[Math.floor(Math.random() * slots.length)]);
-
-    const winnings = calculateWinnings(a, b, c, bet);
-    const updatedBalance = userData.money + winnings;
-
-    spinData.count++;
+    const winnings = win(slot1, slot2, slot3, slot4, slot5, amount);
 
     await usersData.set(senderID, {
-      money: updatedBalance,
-      data: {
-        ...userData.data,
-        slotSpin: spinData,
-      },
+      money: userData.money + winnings,
+      data: userData.data,
     });
 
-    const visuals = `🎰 [ ${a} | ${b} | ${c} ]`;
-    const resultMsg = getSpinResultMessage(a, b, c, winnings, getLang);
-    const balanceMsg = getLang("balance_message").replace("%1", updatedBalance);
-    const spinsLeft = getLang("spins_left").replace("%1", 20 - spinData.count);
-
-    setTimeout(() => {
-      message.reply(`${visuals}\n${resultMsg}\n${balanceMsg} | ${spinsLeft}`);
-    }, 1000);
+    const messageText = result(slot1, slot2, slot3, slot4, slot5, winnings, getLang);
+    return message.reply(messageText);
   },
 };
 
-function calculateWinnings(a, b, c, bet) {
-  if (a === "💎" && b === "💎" && c === "💎") return bet * 10;
-  if (a === b && b === c) return bet * 5;
-  if (a === b || a === c || b === c) return bet * 2;
-  return -bet;
+function win(slot1, slot2, slot3, slot4, slot5, betAmount) {
+  const isWin = Math.random() < 0.5; 
+  const slots = [slot1, slot2, slot3, slot4, slot5];
+  const uniqueSlots = new Set(slots);
+  const matchedCount = (slots.length - uniqueSlots.size) * 2;
+
+  if (slot1 === slot2 && slot2 === slot3 && slot3 === slot4 && slot4 === slot5) {
+    if (slot1 === "💚") return betAmount * 20;
+    if (slot1 === "💛") return betAmount * 15;
+    if (slot1 === "💙") return betAmount * 10;
+    return betAmount * 7;
+  }
+
+  if (isWin) {
+    return betAmount * (matchedCount > 0 ? matchedCount : 2);
+  } else {
+    return -betAmount;
+  }
 }
 
-function getSpinResultMessage(a, b, c, win, getLang) {
-  if (win > 0) {
-    if (a === "💎" && b === "💎" && c === "💎") {
-      return getLang("jackpot_message")
-        .replace("%1", win)
-        .replace("%2", "💎");
+function result(slot1, slot2, slot3, slot4, slot5, winnings, getLang) {
+  const bold = (text) =>
+    text
+      .replace(/[A-Z]/gi, (c) =>
+        String.fromCodePoint(
+          c.charCodeAt(0) + (c >= 'a' ? 119737 - 97 : 119743 - 65)
+        )
+      )
+      .replace(/\d/g, (d) =>
+        String.fromCodePoint(0x1d7ce + parseInt(d))
+      );
+
+  const slotLine = `🎰 [ ${slot1} | ${slot2} | ${slot3} | ${slot4} | ${slot5} ] 🎰`;
+
+  if (winnings > 0) {
+    if (slot1 === slot2 && slot2 === slot3 && slot3 === slot4 && slot4 === slot5) {
+      return `${bold(slotLine)}\n${bold(getLang("jackpot_message", winnings, slot1))}`;
+    } else {
+      return `${bold(slotLine)}\n${bold(getLang("win_message", winnings))}`;
     }
-    return getLang("win_message").replace("%1", win);
   } else {
-    return getLang("lose_message").replace("%1", -win);
+    return `${bold(slotLine)}\n${bold(getLang("lose_message", -winnings))}`;
   }
 }
