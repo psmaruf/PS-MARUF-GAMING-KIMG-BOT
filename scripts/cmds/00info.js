@@ -15,8 +15,7 @@ module.exports = {
 
   onStart: async function ({ api, event }) {
     // ⏱️ UPTIME
-    const startTime = globalThis.__startTime || Date.now();
-    globalThis.__startTime = startTime;
+    const startTime = globalThis.__startTime || (globalThis.__startTime = Date.now());
     const uptimeMs = Date.now() - startTime;
     const hours = Math.floor(uptimeMs / 3600000);
     const minutes = Math.floor((uptimeMs % 3600000) / 60000);
@@ -34,16 +33,22 @@ module.exports = {
     const groupID = event.threadID;
     const memberCount = threadInfo.participantIDs.length;
     const adminCount = threadInfo.adminIDs.length;
+    const messageCount = threadInfo.messageCount || "N/A";
 
+    // GENDER COUNT (bulk)
     let male = 0, female = 0;
-    for (const id of threadInfo.participantIDs) {
-      const info = await api.getUserInfo(id);
-      const gender = info[id]?.gender;
-      if (gender === 'MALE') male++;
-      else if (gender === 'FEMALE') female++;
+    try {
+      const allUserInfo = await api.getUserInfo(threadInfo.participantIDs);
+      for (const id in allUserInfo) {
+        const gender = allUserInfo[id]?.gender;
+        if (gender === 'MALE') male++;
+        else if (gender === 'FEMALE') female++;
+      }
+    } catch (err) {
+      console.error("Gender count failed:", err.message);
     }
 
-    // 🌐✨ Final Message Text
+    // 🌐✨ Final Message
     const msg = 
 `🌐✨ 𝙍𝘼𝙃𝘼𝘿 𝘽𝙊𝙏'𝙎 𝙄𝙉𝙁𝙊... ✨🌐
 
@@ -63,28 +68,21 @@ module.exports = {
 ┃👥 𝗠𝗘𝗠𝗕𝗘𝗥𝗦   : ${memberCount}
 ┃🚹 𝗠𝗔𝗟𝗘     : ${male}   🚺 𝗙𝗘𝗠𝗔𝗟𝗘 : ${female}
 ┃🛡️ 𝗔𝗗𝗠𝗜𝗡𝗦   : ${adminCount}
-┃💬 𝗠𝗘𝗦𝗦𝗔𝗚𝗘𝗦 : ${threadInfo.messageCount || "N/A"}
+┃💬 𝗠𝗘𝗦𝗦𝗔𝗚𝗘𝗦 : ${messageCount}
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
 🔮 𝗠𝗢𝗧𝗧𝗢: "𝗖𝗼𝗱𝗲 𝗪𝗶𝘁𝗵 𝗛𝗼𝗻𝗼𝗿, 𝗙𝗶𝗴𝗵𝘁 𝗪𝗶𝘁𝗵 𝗛𝗲𝗮𝗿𝘁"
 🔥 𝗣𝗢𝗪𝗘𝗥𝗘𝗗 𝗕𝗬 : 𝐗𝐀𝐒𝐒 𝐑𝐀𝐇𝐀𝐃 𝐁𝐎𝐓 🔥`;
 
-    // 🎥 VIDEO LIST (15 total)
+    // 🎥 VIDEO LIST (random)
     const videoIDs = [
-      "10QycYgsTagrN90cWJCIWWVwmps2kk_oF",
-      "10BQjmmp2isPM47CtEZVhYySDQ1lSiCjW",
-      "10aeHJzXq0kJIGdh9E7lfUKYD0oHqz2o3",
-      "10Ke-d2H4yhGpwwAgRt0HmFV8lRB-QJ2J",
-      "10Jb5FGt600rNrJgr-XeTfZsCSjknJep1",
-      "10CDv_le5rdnOYXF3Kp6bnvTSyWvuwHFb",
-      "11SODMThWq7QXQH6UfIexQwXID5rwndrO",
-      "11yApwtKdKmL5T9_VO42HrBqgmEpcieRD",
-      "11sWbYHxAQmVFB9p1-Yj1Kjdn3y4b2q4u",
-      "11sCEjK2gZ6eylftpVqc4V2W9wpYid3ss",
-      "11r9nJpCAx96pP5upIdK3eCybBqo_e3a0",
-      "11qmi8ceB-q-aFZGxhL65FIdV_Kj-gMad",
-      "11hXIudeOKWRO9BTFpta6s5FyFjt9ULye",
-      "11aIU0gfmMuRjoUTkgp20ZOllMNF7ybaA",
+      "10QycYgsTagrN90cWJCIWWVwmps2kk_oF", "10BQjmmp2isPM47CtEZVhYySDQ1lSiCjW",
+      "10aeHJzXq0kJIGdh9E7lfUKYD0oHqz2o3", "10Ke-d2H4yhGpwwAgRt0HmFV8lRB-QJ2J",
+      "10Jb5FGt600rNrJgr-XeTfZsCSjknJep1", "10CDv_le5rdnOYXF3Kp6bnvTSyWvuwHFb",
+      "11SODMThWq7QXQH6UfIexQwXID5rwndrO", "11yApwtKdKmL5T9_VO42HrBqgmEpcieRD",
+      "11sWbYHxAQmVFB9p1-Yj1Kjdn3y4b2q4u", "11sCEjK2gZ6eylftpVqc4V2W9wpYid3ss",
+      "11r9nJpCAx96pP5upIdK3eCybBqo_e3a0", "11qmi8ceB-q-aFZGxhL65FIdV_Kj-gMad",
+      "11hXIudeOKWRO9BTFpta6s5FyFjt9ULye", "11aIU0gfmMuRjoUTkgp20ZOllMNF7ybaA",
       "11WC7f3brQzVpDQtY9yZa_IK6tKDggTrg"
     ];
     const selectedID = videoIDs[Math.floor(Math.random() * videoIDs.length)];
