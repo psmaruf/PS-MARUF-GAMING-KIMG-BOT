@@ -1,0 +1,94 @@
+const axios = require("axios");
+const { getStreamFromURL } = global.utils;
+
+module.exports = {
+  config: {
+    name: "stalk",
+    version: "1.4",
+    author: "Bayjid & ChatGPT",
+    shortDescription: { en: "FB stalk with photo and cover" },
+    longDescription: { en: "View Facebook user info with photo attachments" },
+    category: "tools",
+    guide: { en: "{pn} [UID or Facebook link], or reply to someone's message with +stalk" }
+  },
+
+  onStart: async function ({ message, args, event }) {
+    let input;
+
+    // If command is used as a reply to someone's message
+    if (event.type === "message_reply" && event.messageReply && event.messageReply.body) {
+      input = event.messageReply.body;
+    }
+    // If user typed: +stalk <uid or link>
+    else if (args[0]) {
+      input = args[0];
+    } else {
+      return message.reply("❌ Please provide a UID/link or reply to a message containing it with +stalk.");
+    }
+
+    // Extract UID from link or number
+    const uid = input.includes("facebook.com")
+      ? input.split("/").pop().split("?")[0]
+      : (input.match(/\d{10,}/) || [])[0];
+
+    if (!uid) {
+      return message.reply("❌ Could not extract valid UID or Facebook link.");
+    }
+
+    const api = `https://api-dien.kira1011.repl.co/stalk?uid=${uid}`;
+
+    try {
+      const res = await axios.get(api);
+      const info = res.data.result;
+
+      const text = `
+🔍 𝗙𝗔𝗖𝗘𝗕𝗢𝗢𝗞 𝗦𝗧𝗔𝗟𝗞 𝗥𝗘𝗣𝗢𝗥𝗧
+──────────────────────
+📁 𝗕𝗔𝗦𝗜𝗖 𝗜𝗡𝗙𝗢
+👤 Name: ${info.name}
+⚡ Fast Name: ${info.firstName}
+🆔 UID: ${info.uid}
+🔗 Username: ${info.username || "No username"}
+🌐 Profile Link: ${info.link}
+📅 Created: ${info.created_time || "No data"} || ${info.time || ""}
+☑️ Verified: ${info.is_verified ? "✅ Verified" : "❌ Not Verified"}
+
+🧠 𝗣𝗘𝗥𝗦𝗢𝗡𝗔𝗟 𝗜𝗡𝗙𝗢
+🎂 Birthday: ${info.birthday || "No Data"}
+🗣️ Gender: ${info.gender || "No Data"}
+💘 Relationship: ${info.relationship_status || "No Data"}
+💋 Nickname: ${info.nicknames?.join(", ") || "None"}
+💭 Love Status: ${info.love || "No Data"}
+🧠 About: ${info.about || "No Data"}
+🧡 Quotes: ${info.quotes || "No Data"}
+
+🌍 𝗟𝗢𝗖𝗔𝗧𝗜𝗢𝗡 & 𝗪𝗘𝗕
+🏠 Hometown: ${info.hometown || "No Data"}
+📌 Locale: ${info.locale || "No Data"}
+🌐 Website: ${info.website || "No Data"}
+
+📊 𝗦𝗢𝗖𝗜𝗔𝗟 𝗔𝗖𝗧𝗜𝗩𝗜𝗧𝗬
+👥 Followers: ${info.follow || "No Data"}
+🏢 Works At: ${info.work || "No Data"}
+──────────────────────`.trim();
+
+      const attachments = [];
+
+      if (info.profile_picture) {
+        try {
+          attachments.push(await getStreamFromURL(info.profile_picture));
+        } catch (e) {}
+      }
+      if (info.cover_photo) {
+        try {
+          attachments.push(await getStreamFromURL(info.cover_photo));
+        } catch (e) {}
+      }
+
+      await message.reply({ body: text, attachment: attachments });
+    } catch (err) {
+      console.log(err);
+      message.reply("❌ Failed to fetch data. Maybe UID is wrong or server down.");
+    }
+  }
+};
