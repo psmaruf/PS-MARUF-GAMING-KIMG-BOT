@@ -4,35 +4,26 @@ const { getStreamFromURL } = global.utils;
 module.exports = {
   config: {
     name: "stalk",
-    version: "1.4",
+    version: "1.3",
     author: "Bayjid & ChatGPT",
     shortDescription: { en: "FB stalk with photo and cover" },
     longDescription: { en: "View Facebook user info with photo attachments" },
     category: "tools",
-    guide: { en: "{pn} [UID or Facebook link], or reply to someone's message with +stalk" }
+    guide: { en: "{pn} [UID or FB link] or reply to someone's message" }
   },
 
   onStart: async function ({ message, args, event }) {
-    let input;
+    let uid;
 
-    // If command is used as a reply to someone's message
-    if (event.type === "message_reply" && event.messageReply && event.messageReply.body) {
-      input = event.messageReply.body;
-    }
-    // If user typed: +stalk <uid or link>
-    else if (args[0]) {
-      input = args[0];
+    // If message is a reply, get senderID from replied message
+    if (event.type === "message_reply") {
+      uid = event.messageReply.senderID;
+    } else if (args[0]) {
+      uid = args[0].includes("facebook.com")
+        ? args[0].split("/").pop().split("?")[0]
+        : args[0];
     } else {
-      return message.reply("❌ Please provide a UID/link or reply to a message containing it with +stalk.");
-    }
-
-    // Extract UID from link or number
-    const uid = input.includes("facebook.com")
-      ? input.split("/").pop().split("?")[0]
-      : (input.match(/\d{10,}/) || [])[0];
-
-    if (!uid) {
-      return message.reply("❌ Could not extract valid UID or Facebook link.");
+      return message.reply("❌ Please provide a UID or reply to someone's message.");
     }
 
     const api = `https://api-dien.kira1011.repl.co/stalk?uid=${uid}`;
@@ -79,16 +70,18 @@ module.exports = {
           attachments.push(await getStreamFromURL(info.profile_picture));
         } catch (e) {}
       }
+
       if (info.cover_photo) {
         try {
           attachments.push(await getStreamFromURL(info.cover_photo));
         } catch (e) {}
       }
 
-      await message.reply({ body: text, attachment: attachments });
+      message.reply({ body: text, attachment: attachments });
+
     } catch (err) {
       console.log(err);
-      message.reply("❌ Failed to fetch data. Maybe UID is wrong or server down.");
+      message.reply("❌ Failed to fetch data. Maybe UID is wrong or server is down.");
     }
   }
 };
