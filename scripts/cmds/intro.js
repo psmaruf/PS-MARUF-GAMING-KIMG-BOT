@@ -1,41 +1,39 @@
 const fs = require("fs-extra");
 const axios = require("axios");
-const path = require("path");
+const moment = require("moment");
 
 module.exports = {
   config: {
     name: "intro",
-    aliases: ["info", "aboutbot"],
     version: "2.0",
-    author: "Rahad ✘ ChatGPT",
+    author: "𝗥𝗔𝗛𝗔𝗗 × ChatGPT",
+    countDown: 5,
     role: 0,
-    shortDescription: {
-      en: "Rahad Bot's cinematic intro",
-    },
-    longDescription: {
-      en: "Displays a powerful unique intro of the bot and owner",
-    },
+    shortDescription: { en: "Show Rahad bot system info" },
+    longDescription: { en: "Stylish intro showing bot uptime, owner info, version, and more" },
     category: "info",
-    guide: {
-      en: "{pn}",
-    },
+    guide: { en: "{pn}" }
   },
 
   onStart: async function ({ api, event }) {
-    const time = require("moment-timezone")
-      .tz("Asia/Dhaka")
-      .format("DD/MM/YYYY || HH:mm:ss");
-    const prefix = global.config.PREFIX;
-    const bot = global.config.BOTNAME || "RahadBot";
-    const version = global.GoatBot.version;
-    const uptime = process.uptime();
+    const startTime = global.GoatBot?.startTime || Date.now();
+    const time = moment().format("MMMM Do YYYY, h:mm:ss A");
+    const uptime = process.uptime(); // in seconds
     const h = Math.floor(uptime / 3600);
     const m = Math.floor((uptime % 3600) / 60);
     const s = Math.floor(uptime % 60);
 
+    const bot = "𝗥𝗔𝗛𝗔𝗗 𝗕𝗢𝗧 V2";
+    const version = "2.5.0";
+    const videoURL = "https://drive.google.com/uc?export=download&id=12DuB966likJ_pjKGtjAtPQMmK0eP2QW3";
+    const path = __dirname + "/rahad_intro.mp4";
+
+    const res = await axios.get(videoURL, { responseType: "arraybuffer" });
+    fs.writeFileSync(path, Buffer.from(res.data, "utf-8"));
+
     const finalText = `
 ⫸ 𝗥𝗔𝗛𝗔𝗗 𝗕𝗢𝗧 𝗦𝗬𝗦𝗧𝗘𝗠 ⫷
-🧠 "𝗧𝗛𝗜𝗦 𝗜𝗦𝗡'𝗧 𝗝𝗨𝗦𝗧 𝗔 𝗕𝗢𝗧. 𝗜𝗧'𝗦 𝗔𝗡 𝗥𝗔𝗛𝗔𝗗 𝗗𝗢𝗠𝗜𝗡𝗔𝗧𝗢𝗥."
+🧠 "𝗧𝗛𝗜𝗦 𝗜𝗦𝗡'𝗧 𝗝𝗨𝗦𝗧 𝗔 𝗕𝗢𝗧. 𝗜𝗧'𝗦 𝗔𝗡 𝗔𝗜 𝗗𝗢𝗠𝗜𝗡𝗔𝗧𝗢𝗥."
 
 ╔═════◇👑 𝗢𝗪𝗡𝗘𝗥 𝗣𝗥𝗢𝗙𝗜𝗟𝗘 ◇═════╗
 ║ 🧠 𝗡𝗔𝗠𝗘        : 𝙍𝘼𝙃𝘼𝘿 - 𝙏𝙃𝙀 𝙆𝙄𝙉𝙂 👑
@@ -44,53 +42,21 @@ module.exports = {
 ║ ⚡ 𝗣𝗢𝗪𝗘𝗥𝗟𝗘𝗩𝗘𝗟  : 𝟵𝟵𝟵.𝟵% - 𝗔𝗟𝗟 𝗦𝗬𝗦 𝗢𝗣𝗘𝗡
 ║ 🔐 𝗥𝗢𝗢𝗧 𝗔𝗖𝗖𝗘𝗦𝗦 : ✅ 𝗘𝗡𝗔𝗕𝗟𝗘𝗗
 ║ ⏱ 𝗦𝗜𝗡𝗖𝗘       : ${time}
-╚═══════════════════════╝
+╚════════════════════════════╝
 
 ╔═════◇💥 𝗦𝗬𝗦𝗧𝗘𝗠 𝗦𝗧𝗔𝗧𝗨𝗦 ◇═════╗
 ║ 🤖 𝗕𝗢𝗧 𝗡𝗔𝗠𝗘    : ${bot}
 ║ 🧩 𝗩𝗘𝗥𝗦𝗜𝗢𝗡     : ${version}
 ║ ⌛ 𝗨𝗣𝗧𝗜𝗠𝗘      : ${h}h ${m}m ${s}s
 ║ 💣 𝗠𝗢𝗗𝗘        : 𝗖𝗢𝗠𝗕𝗔𝗧 - 𝗥𝗘𝗔𝗗𝗬
-╚═══════════════════════╝
+╚════════════════════════════╝
 
-⚠️ *This bot is armed with intelligence.*
-🔥 *Disrespect = AUTO ELIMINATION*
-🎬 *Attached below is your reality trailer...*
-`.trim();
+📹 𝗔𝗧𝗧𝗔𝗖𝗛𝗘𝗗 𝗩𝗜𝗗𝗘𝗢 ✔️
+`;
 
-    const url =
-      "https://drive.google.com/uc?export=download&id=12DuB966likJ_pjKGtjAtPQMmK0eP2QW3";
-    const filePath = path.join(__dirname, "rahad_intro.mp4");
-
-    try {
-      const { data } = await axios({
-        url,
-        method: "GET",
-        responseType: "stream",
-      });
-
-      const writer = fs.createWriteStream(filePath);
-      data.pipe(writer);
-
-      writer.on("finish", () => {
-        api.sendMessage(
-          {
-            body: finalText,
-            attachment: fs.createReadStream(filePath),
-          },
-          event.threadID,
-          () => fs.unlinkSync(filePath),
-          event.messageID
-        );
-      });
-
-      writer.on("error", (err) => {
-        console.error("Video write error:", err);
-        api.sendMessage(finalText, event.threadID, event.messageID);
-      });
-    } catch (error) {
-      console.error("Video download error:", error);
-      api.sendMessage(finalText, event.threadID, event.messageID);
-    }
-  },
+    return api.sendMessage({
+      body: finalText,
+      attachment: fs.createReadStream(path)
+    }, event.threadID, () => fs.unlinkSync(path), event.messageID);
+  }
 };
