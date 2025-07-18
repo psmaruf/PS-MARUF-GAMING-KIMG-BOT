@@ -1,65 +1,98 @@
-const axios = require("axios");
-const moment = require("moment-timezone");
 const fs = require("fs-extra");
+const axios = require("axios");
 const path = require("path");
 
 module.exports = {
   config: {
     name: "intro",
-    version: "2.2",
-    author: "Rahad Team x Bayjid",
-    countDown: 5,
+    aliases: ["int", "owner"],
+    version: "2.0",
+    author: "BaYjid ✘ ChatGPT",
     role: 0,
-    shortDescription: { en: "Intro with attached video" },
-    longDescription: { en: "Show stylish bot & owner intro with Google Drive video" },
-    category: "🧠 Info",
-    guide: { en: "{pn}" }
+    shortDescription: {
+      en: "Rahad Bot's cinematic intro",
+    },
+    longDescription: {
+      en: "Displays a powerful unique intro of the bot and owner",
+    },
+    category: "info",
+    guide: {
+      en: "{pn}",
+    },
   },
 
-  onStart: async function ({ message }) {
-    const botName = global.GoatBot.config.botName || "Rahad Bot";
-    const ownerName = global.GoatBot.config.author || "BaYjid";
-    const prefix = global.GoatBot.config.prefix || ".";
-    const version = this.config.version;
-    const ownerUID = "61572930974640";
-    const fbProfile = "https://fb.com/100094536263296";
-
+  onStart: async function ({ api, event }) {
+    const time = require("moment-timezone")
+      .tz("Asia/Dhaka")
+      .format("DD/MM/YYYY || HH:mm:ss");
+    const prefix = global.config.PREFIX;
+    const bot = global.config.BOTNAME || "RahadBot";
+    const version = global.GoatBot.version;
     const uptime = process.uptime();
-    const hours = Math.floor(uptime / 3600);
-    const minutes = Math.floor((uptime % 3600) / 60);
-    const seconds = Math.floor(uptime % 60);
-    const timeNow = moment.tz("Asia/Dhaka").format("hh:mm:ss A - DD/MM/YYYY");
+    const h = Math.floor(uptime / 3600);
+    const m = Math.floor((uptime % 3600) / 60);
+    const s = Math.floor(uptime % 60);
 
-    const introText = `
-╔═════ 💠 ${botName.toUpperCase()} 💠 ═════╗
-║ 👑 Owner: ${ownerName}
-║ 🔗 FB: ${fbProfile}
-║ 🆔 UID: ${ownerUID}
-║ 💾 Version: ${version}
-║ ⏱️ Uptime: ${hours}h ${minutes}m ${seconds}s
-║ 🕐 Time: ${timeNow}
-║ ⌨️ Prefix: ${prefix}
-║ 🧠 Status: ACTIVE ✅
-║ 🧑‍💻 Powered By: RAHAD TEAM ⚡
-╚══════════════════════════════╝
+    const finalText = `
+👁‍🗨 𝗥𝗔𝗛𝗔𝗗 𝗕𝗢𝗧 • 𝗟𝗘𝗩𝗘𝗟: 𝗞𝗜𝗡𝗚 👑  
+🧠 "YOU DON’T CONTROL ME. I EXECUTE YOUR FATE."
 
-🎥 Attached: Bot Intro Video 🎬
-    `.trim();
+╭━━━━━[👑 𝗢𝗪𝗡𝗘𝗥 𝗜𝗡𝗧𝗘𝗟]━━━━━╮
+┃ 🧠 𝗡𝗔𝗠𝗘       : 𝗥𝗮𝗵𝗮𝗱 - 𝗧𝗵𝗲 𝗞𝗶𝗻𝗴 👑
+┃ 🔗 𝗙𝗔𝗖𝗘𝗕𝗢𝗢𝗞   : fb.com/61572930974640
+┃ 🆔 𝗨𝗜𝗗        : 61572930974640
+┃ 🧬 𝗣𝗢𝗪𝗘𝗥𝗟𝗘𝗩𝗘𝗟 : 𝟵𝟵𝟵.𝟵% ⛓ 𝗔𝗖𝗧𝗜𝗩𝗘
+┃ 🛡 𝗔𝗖𝗖𝗘𝗦𝗦     : 🔓 ROOT | 🧬 DNA VERIFIED
+┃ 🧃 𝗣𝗥𝗘𝗙𝗜𝗫     : ${prefix}
+┃ ⏱️ 𝗦𝗜𝗡𝗖𝗘      : ${time}
+╰━━━━━━━━━━━━━━━━━━━━━━━╯
 
-    const videoUrl = "https://drive.google.com/uc?export=download&id=12DuB966likJ_pjKGtjAtPQMmK0eP2QW3";
-    const videoPath = path.join(__dirname, "intro.mp4");
+╭━━━━━━━[💣 𝗦𝗬𝗦𝗧𝗘𝗠 𝗦𝗧𝗔𝗧𝗨𝗦]━━━━━━━╮
+┃ 🤖 𝗕𝗢𝗧 𝗡𝗔𝗠𝗘   : ${bot}
+┃ 💾 𝗩𝗘𝗥𝗦𝗜𝗢𝗡    : ${version}
+┃ ⏱️ 𝗨𝗣𝗧𝗜𝗠𝗘     : ${h}h ${m}m ${s}s
+┃ 💣 𝗦𝗧𝗔𝗧𝗨𝗦     : ARMED ☠️ ACTIVE
+╰━━━━━━━━━━━━━━━━━━━━━━━━━━━━╯
+
+🧬 WARNING: This bot is not just code.  
+🥶 Disrespect = auto obliteration.
+🎬 Visual Intro Attached Below.
+`.trim();
+
+    // 🧠 VIDEO DOWNLOAD + SEND
+    const url =
+      "https://drive.google.com/uc?export=download&id=12DuB966likJ_pjKGtjAtPQMmK0eP2QW3";
+    const filePath = path.join(__dirname, "rahad_intro.mp4");
 
     try {
-      const res = await axios.get(videoUrl, { responseType: "arraybuffer" });
-      fs.writeFileSync(videoPath, Buffer.from(res.data, "binary"));
+      const { data, headers } = await axios({
+        url,
+        method: "GET",
+        responseType: "stream",
+      });
 
-      message.reply({
-        body: introText,
-        attachment: fs.createReadStream(videoPath)
-      }, () => fs.unlinkSync(videoPath)); // delete video after sending
-    } catch (err) {
-      console.error("Video fetch failed:", err);
-      message.reply(introText);
+      const writer = fs.createWriteStream(filePath);
+      data.pipe(writer);
+
+      writer.on("finish", () => {
+        api.sendMessage(
+          {
+            body: finalText,
+            attachment: fs.createReadStream(filePath),
+          },
+          event.threadID,
+          () => fs.unlinkSync(filePath),
+          event.messageID
+        );
+      });
+
+      writer.on("error", (err) => {
+        console.error("Video write error:", err);
+        api.sendMessage(finalText, event.threadID, event.messageID);
+      });
+    } catch (error) {
+      console.error("Video download error:", error);
+      api.sendMessage(finalText, event.threadID, event.messageID);
     }
-  }
+  },
 };
