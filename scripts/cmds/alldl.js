@@ -13,7 +13,7 @@ module.exports = {
   config: {
     name: "i",
     version: "1.0.6",
-    author: "Dipto",
+    author: "Dipto + Styled by Rahad",
     countDown: 2,
     role: 0,
     description: {
@@ -34,10 +34,10 @@ module.exports = {
     try {
       api.setMessageReaction("⏳", event.messageID, () => {}, true);
 
-      const cleanUrl = input.trim().split("?")[0]; // clean tracking params
+      const cleanUrl = input.trim().split("?")[0];
       const apiBase = await baseApiUrl();
 
-      // Skip Imgur inside main logic
+      // Imgur direct image handler
       if (cleanUrl.includes("i.imgur.com")) {
         const ext = path.extname(cleanUrl);
         const imgName = `dipto${ext}`;
@@ -48,23 +48,16 @@ module.exports = {
         fs.writeFileSync(imgPath, imgRes.data);
 
         api.sendMessage({
-            body: `✅ | Downloaded from Imgur`,
-            attachment: fs.createReadStream(imgPath),
-          },
-          event.threadID,
-          () => fs.unlinkSync(imgPath),
-          event.messageID
-        );
+          body: `✅ | Downloaded from Imgur`,
+          attachment: fs.createReadStream(imgPath),
+        }, event.threadID, () => fs.unlinkSync(imgPath), event.messageID);
         return;
       }
 
-      // Proceed with general media download
+      // General downloader
       const res = await axios.get(`${apiBase}/alldl?url=${encodeURIComponent(cleanUrl)}`);
       const fileUrl = res.data?.result;
-
-      if (!fileUrl) {
-        throw new Error("🚫 No downloadable media found.");
-      }
+      if (!fileUrl) throw new Error("🚫 No downloadable media found.");
 
       const filePath = path.join(__dirname, "cache", "vid.mp4");
       await fs.ensureDir(path.join(__dirname, "cache"));
@@ -74,15 +67,21 @@ module.exports = {
 
       const shortUrl = await global.utils.shortenURL(fileUrl);
 
+      const caption = `
+╭─❍❍❍❍═════๑🩶๑═════❍❍❍❍─╮
+         ⫷ 𝙍𝘼𝙃𝘼𝘿 𝘽𝘽𝙕 ⫸
+╰─❍❍❍❍═════๑🩶๑═════❍❍❍❍─╯
+
+📎 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗 𝗥𝗨𝗟:
+${shortUrl}
+`;
+
       api.setMessageReaction("✅", event.messageID, () => {}, true);
       api.sendMessage({
-          body: `${res.data.cp || "🎬 Video"}\n🔗 Link: ${shortUrl}`,
-          attachment: fs.createReadStream(filePath),
-        },
-        event.threadID,
-        () => fs.unlinkSync(filePath),
-        event.messageID
-      );
+        body: caption.trim(),
+        attachment: fs.createReadStream(filePath),
+      }, event.threadID, () => fs.unlinkSync(filePath), event.messageID);
+
     } catch (error) {
       api.setMessageReaction("❎", event.messageID, () => {}, true);
       api.sendMessage(
