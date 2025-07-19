@@ -1,62 +1,88 @@
-const fs = require("fs-extra");
 const axios = require("axios");
-const moment = require("moment");
+const fs = require("fs-extra");
+const path = require("path");
+const moment = require("moment-timezone");
+
+let lastVideoId = null; // Prevent immediate repeat
 
 module.exports = {
   config: {
     name: "intro",
-    version: "2.0",
-    author: "𝗥𝗔𝗛𝗔𝗗 × ChatGPT",
-    countDown: 5,
+    version: "3.0.0",
+    author: "RAHAD",
     role: 0,
-    shortDescription: { en: "Show Rahad bot system info" },
-    longDescription: { en: "Stylish intro showing bot uptime, owner info, version, and more" },
+    shortDescription: { en: "Stylish bot intro with random video" },
+    longDescription: { en: "Sends highly styled intro and picks a non-repeating video each time." },
     category: "info",
     guide: { en: "{pn}" }
   },
 
   onStart: async function ({ api, event }) {
-    const startTime = global.GoatBot?.startTime || Date.now();
-    const time = moment().format("MMMM Do YYYY, h:mm:ss A");
-    const uptime = process.uptime(); // in seconds
-    const h = Math.floor(uptime / 3600);
-    const m = Math.floor((uptime % 3600) / 60);
-    const s = Math.floor(uptime % 60);
+    const time = process.uptime();
+    const hours = Math.floor(time / 3600);
+    const minutes = Math.floor((time % 3600) / 60);
+    const seconds = Math.floor(time % 60);
+    const uptime = `${hours}h ${minutes}m ${seconds}s`;
 
-    const bot = "𝗥𝗔𝗛𝗔𝗗 𝗕𝗢𝗧 V2";
-    const version = "2.5.0";
-    const videoURL = "https://drive.google.com/uc?export=download&id=12DuB966likJ_pjKGtjAtPQMmK0eP2QW3";
-    const path = __dirname + "/rahad_intro.mp4";
+    const dateFormatted = moment().tz("Asia/Dhaka").format("MMMM Do YYYY, h:mm:ss A");
 
-    const res = await axios.get(videoURL, { responseType: "arraybuffer" });
-    fs.writeFileSync(path, Buffer.from(res.data, "utf-8"));
+    const videos = [
+      "12exo69Tl2FtqGQeTNFFKuyyZPIr3TGLI",
+      "12rj-Kf2OwOgsUeJoXmhEHk43untJt9jZ",
+      "12nc7VbqIkO8xAM9gqCZXAIUtKW68kcFn"
+    ];
 
-    const finalText = `
-⫸ 𝗥𝗔𝗛𝗔𝗗 𝗕𝗢𝗧 𝗦𝗬𝗦𝗧𝗘𝗠 ⫷
-🧠 "𝗧𝗛𝗜𝗦 𝗜𝗦𝗡'𝗧 𝗝𝗨𝗦𝗧 𝗔 𝗕𝗢𝗧. 𝗜𝗧'𝗦 𝗔𝗡 𝗔𝗜 𝗗𝗢𝗠𝗜𝗡𝗔𝗧𝗢𝗥."
+    // Pick a new video ID, different from lastVideoId
+    let videoId;
+    do {
+      videoId = videos[Math.floor(Math.random() * videos.length)];
+    } while (videoId === lastVideoId && videos.length > 1);
+    lastVideoId = videoId;
 
-╔═════◇👑 𝗢𝗪𝗡𝗘𝗥 𝗣𝗥𝗢𝗙𝗜𝗟𝗘 ◇═════╗
-║ 🧠 𝗡𝗔𝗠𝗘        : 𝙍𝘼𝙃𝘼𝘿 - 𝙏𝙃𝙀 𝙆𝙄𝙉𝙂 👑
-║ 🌐 𝗙𝗔𝗖𝗘𝗕𝗢𝗢𝗞   : fb.com/61572930974640
-║ 🆔 𝗨𝗜𝗗         : 61572930974640
-║ ⚡ 𝗣𝗢𝗪𝗘𝗥𝗟𝗘𝗩𝗘𝗟  : 𝟵𝟵𝟵.𝟵% - 𝗔𝗟𝗟 𝗦𝗬𝗦 𝗢𝗣𝗘𝗡
-║ 🔐 𝗥𝗢𝗢𝗧 𝗔𝗖𝗖𝗘𝗦𝗦 : ✅ 𝗘𝗡𝗔𝗕𝗟𝗘𝗗
-║ ⏱ 𝗦𝗜𝗡𝗖𝗘       : ${time}
-╚════════════════════════════╝
+    const videoURL = `https://drive.google.com/uc?export=download&id=${videoId}`;
+    const filePath = path.join(__dirname, `intro_${videoId}.mp4`);
 
-╔═════◇💥 𝗦𝗬𝗦𝗧𝗘𝗠 𝗦𝗧𝗔𝗧𝗨𝗦 ◇═════╗
-║ 🤖 𝗕𝗢𝗧 𝗡𝗔𝗠𝗘    : ${bot}
-║ 🧩 𝗩𝗘𝗥𝗦𝗜𝗢𝗡     : ${version}
-║ ⌛ 𝗨𝗣𝗧𝗜𝗠𝗘      : ${h}h ${m}m ${s}s
-║ 💣 𝗠𝗢𝗗𝗘        : 𝗖𝗢𝗠𝗕𝗔𝗧 - 𝗥𝗘𝗔𝗗𝗬
-╚════════════════════════════╝
+    try {
+      const res = await axios.get(videoURL, { responseType: "arraybuffer" });
+      fs.writeFileSync(filePath, res.data);
+    } catch (err) {
+      return api.sendMessage("⚠️ Failed to download video.", event.threadID);
+    }
 
-📹 𝗔𝗧𝗧𝗔𝗖𝗛𝗘𝗗 𝗩𝗜𝗗𝗘𝗢 ✔️
+    const msg = `
+┏━━━━━━━━━━━━━━┓
+┃ 𓆩⚙️ 𝙍𝘼𝙃𝘼𝘿 𝘽𝙊𝙏 𝙎𝙔𝙎𝙏𝙀𝙈 ⚙️𓆪
+┃ “𝗧𝗛𝗜𝗦 𝗜𝗦𝗡'𝗧 𝗝𝗨𝗦𝗧 𝗔 𝗕𝗢𝗧, 𝗜𝗧'𝗦 𝗔𝗡 𝗔𝗜 𝗗𝗢𝗠𝗜𝗡𝗔𝗧𝗢𝗥.”
+┗━━━━━━━━━━━━━━┛
+
+✦『 👑 𝙊𝙒𝙉𝙀𝙍 𝙄𝙉𝙁𝙊 』✦
+╭─────────────────────────╮
+┃ 🪪 𝗡𝗔𝗠𝗘      : 𝙍𝘼𝙃𝘼𝘿 - 𝙏𝙃𝙀 𝙆𝙄𝙉𝙂 👑
+┃ 🌐 𝗙𝗔𝗖𝗘𝗕𝗢𝗢𝗞 : fb.com/61572930974640
+┃ 🆔 𝗨𝗜𝗗       : 61572930974640
+┃ ⚡ 𝗣𝗢𝗪𝗘𝗥     : 999.9% ⚙ AI CORE
+┃ 🔓 𝗥𝗢𝗢𝗧      : ✅ ENABLED
+┃ 🕓 𝗗𝗔𝗧𝗘       : ${dateFormatted}
+╰─────────────────────────╯
+
+✦『 💻 𝙎𝙔𝙎𝙏𝙀𝙈 𝙎𝙏𝘼𝙏𝙐𝙎 』✦
+╭─────────────────────────╮
+┃ 🤖 𝗕𝗢𝗧        : 𝙍𝘼𝙃𝘼𝘿 𝘽𝙊𝙏 𝙑𝟮
+┃ 🧩 𝗩𝗘𝗥𝗦𝗜𝗢𝗡  : 3.0.0
+┃ ⌛ 𝗨𝗣𝗧𝗜𝗠𝗘    : ${uptime}
+┃ 🧠 𝗠𝗢𝗗𝗘       : COMBAT — LIVE ⚔️
+╰─────────────────────────╯
+
+📎 𝙑𝙄𝘿𝙀𝙊 𝘼𝙏𝙏𝘼𝘾𝙃𝙀𝘿 ✅
 `;
 
-    return api.sendMessage({
-      body: finalText,
-      attachment: fs.createReadStream(path)
-    }, event.threadID, () => fs.unlinkSync(path), event.messageID);
+    api.sendMessage(
+      {
+        body: msg,
+        attachment: fs.createReadStream(filePath)
+      },
+      event.threadID,
+      () => fs.unlinkSync(filePath)
+    );
   }
 };
