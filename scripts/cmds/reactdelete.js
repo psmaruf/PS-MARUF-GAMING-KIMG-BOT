@@ -1,33 +1,25 @@
-const fs = require("fs-extra");
-
 module.exports = {
   config: {
     name: "reactdelete",
-    eventType: ["message_reaction"],
     version: "1.0",
-    author: "RAHAD",
-    description: {
-      en: "Delete bot message if someone reacts with 😾"
+    author: "Rahad",
+    role: 0,
+    shortDescription: "React 😾 to bot's message to delete it",
+    longDescription: "If someone reacts 😾 to a bot's message, the bot will unsend it",
+    category: "automation",
+    guide: {
+      en: "Just react 😾 to a message sent by the bot, and it will delete that message."
     }
   },
 
-  onEvent: async function ({ event, api }) {
-    const { messageID, reaction, added } = event;
-
-    // ✅ Check if reaction was just added and is 😾
-    if (!added || reaction !== "😾") return;
-
+  onReaction: async function ({ api, event }) {
     try {
-      // ✅ Get message info to check sender
-      const info = await api.getMessageInfo(messageID);
-      const botID = api.getCurrentUserID();
-
-      if (info.senderID === botID) {
-        await api.unsendMessage(messageID);
-        console.log(`[reactdelete] Bot message ${messageID} deleted on 😾 reaction.`);
+      // Check if message was sent by bot itself
+      if (event.userID == global.GoatBot.botID && event.reaction == "😾") {
+        await api.unsendMessage(event.messageID);
       }
     } catch (err) {
-      console.error("[reactdelete] Error unsending message:", err);
+      console.error("reactdelete error:", err);
     }
   }
 };
