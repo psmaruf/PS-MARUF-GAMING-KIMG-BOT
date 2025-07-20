@@ -1,63 +1,87 @@
-const { getStreamFromURL } = global.utils;
-const talkedRecently = new Set();
+const axios = require("axios");
+const fs = require("fs-extra");
+const path = require("path");
+
+let talkedRecently = new Set();
 
 module.exports = {
   config: {
-    name: "emaudio",
-    version: "1.0",
-    author: "Father Rahad",
-    countDown: 0,
+    name: "emaaudio",
+    version: "1.1",
+    author: "Rahad",
+    countDown: 5,
     role: 0,
     shortDescription: {
-      en: "Emotional audio reply"
+      en: "Send voice on specific emoji/text",
     },
     longDescription: {
-      en: "Sends emotional voice messages on emoji or text"
+      en: "Replies with voice and message when user sends certain emoji or 'i love you'",
     },
-    category: "media",
-    guide: {
-      en: "Just send 😀, 😄, 🥺, 🙂 or say i love you"
-    },
-    usePrefix: false
+    category: "fun",
   },
 
-  onChat: async function ({ event, message }) {
-    const body = event.body?.toLowerCase()?.trim();
-    if (!body) return;
+  onStart: async function () {},
 
-    if (talkedRecently.has(event.senderID)) return;
-    talkedRecently.add(event.senderID);
-    setTimeout(() => talkedRecently.delete(event.senderID), 5000); // Anti-spam
-
-    const voices = {
+  onChat: async function ({ event, api }) {
+    const triggers = {
       "😀": {
         url: "https://drive.google.com/uc?export=download&id=13Jr2kZeMHOaVwsrX-FGBkwHmnOK3YkLm",
-        body: "╭──🎉 𝗛𝗔𝗣𝗣𝗬 𝗠𝗢𝗠𝗘𝗡𝗧 ──╮\n😀 Smile louder... world listens.\n╰────────────────────────────╯"
-      },
-      "😄": {
-        url: "https://drive.google.com/uc?export=download&id=13NVp3r8BhnfAGbe6eLLQaOhPWvnHRKqe",
-        body: "╭──🌟 𝗝𝗢𝗬𝗙𝗨𝗟 𝗦𝗣𝗔𝗥𝗞 ──╮\n😄 Overflowing with happiness!\n╰────────────────────────────╯"
+        message: `
+🌸💔 𝗜 𝗧𝗿𝗶𝗲𝗱... 
+𝗜 𝗣𝗿𝗼𝗺𝗶𝘀𝗲𝗱... 
+𝗜 𝗟𝗼𝘃𝗲𝗱... 
+𝗕𝘂𝘁 𝗜 𝗚𝗼𝘁 𝗧𝗶𝗿𝗲𝗱... 🖤`
       },
       "🥺": {
-        url: "https://drive.google.com/uc?export=download&id=13F1nJNnmyXS-H6kL6-00DPmOzjaDmZmc",
-        body: "╭──🎧 𝗘𝗠𝗢𝗧𝗜𝗢𝗡𝗔𝗟 𝗥𝗘𝗦𝗣𝗢𝗡𝗦𝗘 ──╮\n🥺 Voice attached for this mood...\n╰────────────────────────────╯"
+        url: "https://drive.google.com/uc?export=download&id=13NVp3r8BhnfAGbe6eLLQaOhPWvnHRKqe",
+        message: `
+🖤 Sometimes the person who tries to keep everyone happy is the most lonely person 💔`
       },
-      "🙂": {
+      "🥲": {
         url: "https://drive.google.com/uc?export=download&id=13CWeUhyeyX6Yd-AX9IxWuCmkN8u8IDQL",
-        body: "╭──🟢 𝗖𝗔𝗟𝗠 𝗦𝗠𝗜𝗟𝗘 ──╮\n🙂 Stay positive and keep calm.\n╰────────────────────────────╯"
+        message: `
+💔 I'm not mad...
+I'm just hurt...
+There's a difference... 🥀`
       },
       "i love you": {
         url: "https://drive.google.com/uc?export=download&id=13NVp3r8BhnfAGbe6eLLQaOhPWvnHRKqe",
-        body: "💔 𝗕𝗥𝗘𝗔𝗞𝗨𝗣 𝗧𝗢𝗡𝗘 𝗙𝗘𝗘𝗟𝗦...\n💔 𝗬𝗼𝘂 𝘀𝗮𝗶𝗱 '𝗜 𝗟𝗼𝘃𝗲 𝗬𝗼𝘂', 𝗯𝘂𝘁 𝘄𝗵𝘆 𝗱𝗶𝗱 𝘆𝗼𝘂 𝗹𝗲𝗮𝘃𝗲?\n🎧 Powered by Father Rahad"
+        message: `
+💘 You said "I love you"... 
+But did you mean it? 💔`
       }
     };
 
-    if (voices[body]) {
-      const stream = await getStreamFromURL(voices[body].url);
-      return message.reply({
-        body: voices[body].body,
-        attachment: stream
-      });
+    const msg = event.body?.toLowerCase()?.trim();
+    if (!msg) return;
+
+    if (talkedRecently.has(event.senderID)) return;
+
+    for (let key in triggers) {
+      if (msg === key.toLowerCase()) {
+        try {
+          talkedRecently.add(event.senderID);
+          setTimeout(() => talkedRecently.delete(event.senderID), 10 * 1000);
+
+          const { url, message } = triggers[key];
+          const res = await axios.get(url, { responseType: "arraybuffer" });
+          const filePath = path.join(__dirname, "temp_audio.mp3");
+          fs.writeFileSync(filePath, res.data);
+
+          await api.sendMessage(
+            {
+              body: message,
+              attachment: fs.createReadStream(filePath)
+            },
+            event.threadID,
+            () => fs.unlinkSync(filePath),
+            event.messageID
+          );
+        } catch (err) {
+          console.error("Voice send error:", err);
+        }
+        break;
+      }
     }
   }
 };
