@@ -2,24 +2,32 @@ module.exports = {
   config: {
     name: "reactdelete",
     version: "1.0",
-    author: "Rahad",
+    author: "Father Rahad",
     role: 0,
-    shortDescription: "React 😾 to bot's message to delete it",
-    longDescription: "If someone reacts 😾 to a bot's message, the bot will unsend it",
-    category: "automation",
-    guide: {
-      en: "Just react 😾 to a message sent by the bot, and it will delete that message."
-    }
+    shortDescription: {
+      en: "Delete message if reacted with 😾"
+    },
+    longDescription: {
+      en: "Automatically delete bot's message if someone reacts with 😾"
+    },
+    category: "auto"
+  },
+
+  onStart: async function () {
+    // Required for load, even if empty
   },
 
   onReaction: async function ({ api, event }) {
     try {
-      // Check if message was sent by bot itself
-      if (event.userID == global.GoatBot.botID && event.reaction == "😾") {
+      const reaction = event.reaction;
+      const botID = api.getCurrentUserID();
+
+      // If bot sent the message, and someone reacted with 😾
+      if (reaction === "😾" && event.userID !== botID) {
         await api.unsendMessage(event.messageID);
       }
-    } catch (err) {
-      console.error("reactdelete error:", err);
+    } catch (e) {
+      console.log("ReactDelete Error:", e);
     }
   }
 };
