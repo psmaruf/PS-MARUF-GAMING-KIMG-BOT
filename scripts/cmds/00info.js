@@ -4,11 +4,11 @@ module.exports = {
   config: {
     name: "info",
     aliases: ["owner", "dev", "creator"],
-    version: "2.6",
+    version: "3.0",
     author: "BaYjid",
     role: 0,
-    shortDescription: { en: "Rahad Bot info with upgraded stylish design" },
-    longDescription: { en: "Shows Rahad Bot uptime, ping, group info & sends a video with stylish grid design." },
+    shortDescription: { en: "Show bot stats with design like screenshot" },
+    longDescription: { en: "Bot uptime, ping, group info, owner info in full styled layout." },
     category: "Info",
     guide: { en: "{pn}" }
   },
@@ -30,7 +30,6 @@ module.exports = {
     const groupID = event.threadID;
     const memberCount = threadInfo.participantIDs.length;
     const adminCount = threadInfo.adminIDs.length;
-    const messageCount = threadInfo.messageCount || "N/A";
 
     let male = 0, female = 0;
     try {
@@ -45,29 +44,29 @@ module.exports = {
     }
 
     const msg = `
-╔═━「 🧠 𝙍𝘼𝙃𝘼𝘿 𝘽𝙊𝙏 𝙎𝙔𝙎𝙏𝙀𝙈 」━═╗
+╭─「 🧠 *RAHAD BOT SYSTEM* 」─╮
 
-🛰️ 𝗦𝗬𝗦𝗧𝗘𝗠 𝗦𝗧𝗔𝗧𝗨𝗦:
-╭───────────────╮
-│⏱️ 𝗨𝗣𝗧𝗜𝗠𝗘 : 𝘽𝙤𝙩 𝙊𝙣𝙡𝙞𝙣𝙚 𝙛𝙤𝙧 ${uptime}
-│📶 𝗣𝗜𝗡𝗚    : ${ping}ms 🚀
-╰───────────────╯
+📊 *SYSTEM STATUS:*
+╭───────────────────────╮
+│ ⏰ *UPTIME* : *Bot Online for* ${uptime}
+│ 📶 *PING*    : *${ping}ms* 🚀
+╰───────────────────────╯
 
-🧑‍💻 𝗢𝗪𝗡𝗘𝗥 𝗜𝗡𝗙𝗢:
-╭────────────────────╮
-│👤 𝗡𝗔𝗠𝗘     : 𝙁𝘼𝙏𝙃𝙀𝙍 𝙍𝘼𝙃𝘼𝘿 🐉
-│📞 𝗖𝗢𝗡𝗧𝗔𝗖𝗧 : +91 80160 42533
-╰────────────────────╯
+🧑‍💻 *OWNER INFO:*
+╭───────────────────────╮
+│ 👤 *NAME*    : *FATHER RAHAD* 🐍
+│ ☎️ *CONTACT* : *+91 80160 42533*
+╰───────────────────────╯
 
-👥 𝗚𝗥𝗢𝗨𝗣 𝗜𝗡𝗙𝗢:
-╭────────────────────────────╮
-│🏷️ 𝗡𝗔𝗠𝗘      : ${groupName}
-│🆔 𝗜𝗗         : ${groupID}
-│👪 𝗠𝗘𝗠𝗕𝗘𝗥𝗦  : ${memberCount} 👤 | 𝗔𝗗𝗠𝗜𝗡𝗦 👑 : ${adminCount}
-│🚹 𝗠𝗔𝗟𝗘      : ${male} | 🚺 𝗙𝗘𝗠𝗔𝗟𝗘 : ${female}
-╰────────────────────────────╯
+👥 *GROUP INFO:*
+╭────────────────────────────────╮
+│ 🏷️ *NAME*     : *${groupName}*
+│ 🆔 *ID*       : *${groupID}*
+│ 👫 *MEMBERS*  : *${memberCount}* 👤 | *ADMINS* 👑 : *${adminCount}*
+│ 🚹 *MALE*     : *${male}* | 🚺 *FEMALE* : *${female}*
+╰────────────────────────────────╯
 
-📜 『 𝙈𝙊𝙏𝙏𝙊 : ✨ 𝘽𝙪𝙞𝙡𝙙. 𝙃𝙖𝙘𝙠. 𝙍𝙚𝙥𝙚𝙖𝙩. ✨ 』`;
+📜 *『 MOTTO : ✨ Build. Hack. Repeat. ✨ 』*`;
 
     const videoIDs = [
       "10QycYgsTagrN90cWJCIWWVwmps2kk_oF", "10BQjmmp2isPM47CtEZVhYySDQ1lSiCjW",
@@ -86,8 +85,8 @@ module.exports = {
       const videoStream = await axios({ method: "GET", url: videoURL, responseType: "stream" });
       return api.sendMessage({ body: msg, attachment: videoStream.data }, event.threadID);
     } catch (err) {
-      console.error("Video failed:", err.message);
-      return api.sendMessage(msg + "\n⚠️ Video load failed.", event.threadID);
+      console.error("❌ Video failed:", err.message);
+      return api.sendMessage(msg + "\n⚠️ Could not load video.", event.threadID);
     }
   }
 };
