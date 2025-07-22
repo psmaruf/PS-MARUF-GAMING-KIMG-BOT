@@ -4,30 +4,27 @@ module.exports = {
   config: {
     name: "info",
     aliases: ["owner", "dev", "creator"],
-    version: "2.3",
+    version: "2.6",
     author: "BaYjid",
     role: 0,
-    shortDescription: { en: "Rahad Bot info with upgraded design" },
-    longDescription: { en: "Shows Rahad Bot uptime, ping, group info & sends a video with unique grid design." },
+    shortDescription: { en: "Rahad Bot info with upgraded stylish design" },
+    longDescription: { en: "Shows Rahad Bot uptime, ping, group info & sends a video with stylish grid design." },
     category: "Info",
     guide: { en: "{pn}" }
   },
 
   onStart: async function ({ api, event }) {
-    // ⏱️ UPTIME
     const startTime = globalThis.__startTime || (globalThis.__startTime = Date.now());
     const uptimeMs = Date.now() - startTime;
     const hours = Math.floor(uptimeMs / 3600000);
     const minutes = Math.floor((uptimeMs % 3600000) / 60000);
     const seconds = Math.floor((uptimeMs % 60000) / 1000);
-    const uptime = `${hours}hrs ${minutes}min ${seconds}sec`;
+    const uptime = `${hours}h ${minutes}m ${seconds}s`;
 
-    // 📶 PING
     const pingStart = Date.now();
     await new Promise(res => setTimeout(res, 40));
     const ping = Date.now() - pingStart;
 
-    // 🧑‍🤝‍🧑 GROUP INFO
     const threadInfo = await api.getThreadInfo(event.threadID);
     const groupName = threadInfo.threadName || "Unnamed Group";
     const groupID = event.threadID;
@@ -35,43 +32,43 @@ module.exports = {
     const adminCount = threadInfo.adminIDs.length;
     const messageCount = threadInfo.messageCount || "N/A";
 
-    // GENDER COUNT
     let male = 0, female = 0;
     try {
       const allUserInfo = await api.getUserInfo(threadInfo.participantIDs);
       for (const id in allUserInfo) {
-        const gender = allUserInfo[id]?.gender;
-        if (gender === 'MALE') male++;
-        else if (gender === 'FEMALE') female++;
+        const gender = allUserInfo[id]?.gender?.toLowerCase();
+        if (gender === "male") male++;
+        else if (gender === "female") female++;
       }
     } catch (err) {
       console.error("Gender count failed:", err.message);
     }
 
-    // 🌐✨ Final Upgraded Grid Message
-    const msg = 
-`⧉⧉⧉⧉⧉ 『 ⚙️ 𝗥𝗔𝗛𝗔𝗗 𝗕𝗢𝗧 ⚙️ 』 ⧉⧉⧉⧉⧉
+    const msg = `
+╔═━「 🧠 𝙍𝘼𝙃𝘼𝘿 𝘽𝙊𝙏 𝙎𝙔𝙎𝙏𝙀𝙈 」━═╗
 
-╔═══『 SYSTEM STATUS 』═══╗
-⧫ 𝙐𝙋𝙏𝙄𝙈𝙀 : ${uptime}
-⧫ 𝙋𝙄𝙉𝙂   : ${ping}ms
-╚═════════════════════╝
+🛰️ 𝗦𝗬𝗦𝗧𝗘𝗠 𝗦𝗧𝗔𝗧𝗨𝗦:
+╭───────────────╮
+│⏱️ 𝗨𝗣𝗧𝗜𝗠𝗘 : 𝘽𝙤𝙩 𝙊𝙣𝙡𝙞𝙣𝙚 𝙛𝙤𝙧 ${uptime}
+│📶 𝗣𝗜𝗡𝗚    : ${ping}ms 🚀
+╰───────────────╯
 
-╔═══『 OWNER INFO 』═══╗
-⧫ 👤 𝙉𝘼𝙈𝙀   : Rahad
-⧫ 📞 𝘾𝙊𝙉𝙏𝘼𝘾𝙏 : +9180160 42533
-╚═════════════════════╝
+🧑‍💻 𝗢𝗪𝗡𝗘𝗥 𝗜𝗡𝗙𝗢:
+╭────────────────────╮
+│👤 𝗡𝗔𝗠𝗘     : 𝙁𝘼𝙏𝙃𝙀𝙍 𝙍𝘼𝙃𝘼𝘿 🐉
+│📞 𝗖𝗢𝗡𝗧𝗔𝗖𝗧 : +91 80160 42533
+╰────────────────────╯
 
-╔═══『 GROUP DATA 』═══╗
-⧫ 🏷️ 𝙉𝘼𝙈𝙀    : ${groupName}
-⧫ 🆔 𝙄𝘿       : ${groupID}
-⧫ 👥 𝙈𝙀𝙈𝘽𝙀𝙍𝙎 : ${memberCount} | 👑 ${adminCount}
-⧫ 🚹 𝙈𝘼𝙇𝙀    : ${male} | 🚺 𝙁𝙀𝙈𝘼𝙇𝙀 : ${female}
-╚═════════════════════╝
+👥 𝗚𝗥𝗢𝗨𝗣 𝗜𝗡𝗙𝗢:
+╭────────────────────────────╮
+│🏷️ 𝗡𝗔𝗠𝗘      : ${groupName}
+│🆔 𝗜𝗗         : ${groupID}
+│👪 𝗠𝗘𝗠𝗕𝗘𝗥𝗦  : ${memberCount} 👤 | 𝗔𝗗𝗠𝗜𝗡𝗦 👑 : ${adminCount}
+│🚹 𝗠𝗔𝗟𝗘      : ${male} | 🚺 𝗙𝗘𝗠𝗔𝗟𝗘 : ${female}
+╰────────────────────────────╯
 
-⧉ 『 MOTTO : 𝘽𝙪𝙞𝙡𝙙. 𝙃𝙖𝙘𝙠. 𝙍𝙚𝙥𝙚𝙖𝙩. 』⧉`;
+📜 『 𝙈𝙊𝙏𝙏𝙊 : ✨ 𝘽𝙪𝙞𝙡𝙙. 𝙃𝙖𝙘𝙠. 𝙍𝙚𝙥𝙚𝙖𝙩. ✨ 』`;
 
-    // 🎥 VIDEO LIST (random)
     const videoIDs = [
       "10QycYgsTagrN90cWJCIWWVwmps2kk_oF", "10BQjmmp2isPM47CtEZVhYySDQ1lSiCjW",
       "10aeHJzXq0kJIGdh9E7lfUKYD0oHqz2o3", "10Ke-d2H4yhGpwwAgRt0HmFV8lRB-QJ2J",
@@ -85,13 +82,12 @@ module.exports = {
     const selectedID = videoIDs[Math.floor(Math.random() * videoIDs.length)];
     const videoURL = `https://drive.google.com/uc?export=download&id=${selectedID}`;
 
-    // 📤 SEND MESSAGE
     try {
       const videoStream = await axios({ method: "GET", url: videoURL, responseType: "stream" });
       return api.sendMessage({ body: msg, attachment: videoStream.data }, event.threadID);
     } catch (err) {
-      console.error("❌ Video failed:", err.message);
-      return api.sendMessage(msg + "\n⚠️ Could not load video.", event.threadID);
+      console.error("Video failed:", err.message);
+      return api.sendMessage(msg + "\n⚠️ Video load failed.", event.threadID);
     }
   }
 };
