@@ -1,86 +1,67 @@
-const fs = require("fs");
+const fs = require("fs-extra");
 const path = require("path");
 
-const videoLinks = [
-  "https://drive.google.com/uc?export=download&id=1-WKsuSsLsO8BKc2Oil0KAxvgcwcsFTA3",
-  "https://drive.google.com/uc?export=download&id=1-8VSzbLm7c2eBesp8YwwvJxdhs0dcFSL",
-  "https://drive.google.com/uc?export=download&id=102gwON6P4YxDI0dK0N1A6QkF2ms1eW4d",
-  "https://drive.google.com/uc?export=download&id=16h6cEFYYHqjNAuVsyVhJfoCg_1SBOO82"
+const VIDEO_IDS = [
+  "1-WKsuSsLsO8BKc2Oil0KAxvgcwcsFTA3",
+  "1-8VSzbLm7c2eBesp8YwwvJxdhs0dcFSL",
+  "102gwONJjVYk9YkjGTV4E_FZny5oQORlm",
+  "10SptKmtbPo81mdZKEl3g-D-rvGmRZC2",
+  "1kQ_AEy9cxzH0bOwPMaXg_jHRZOUm7dKe",
+  "1-x7l8DLDhz6gRATYT5TDl68W6mf_Xe1L"
 ];
 
 module.exports = {
   config: {
     name: "help",
-    aliases: ["h", "menu", "cmd", "commands", "rahad"],
+    aliases: ["h", "menu", "rahad"],
     version: "2.0",
-    author: "RAHAD Edit",
-    countDown: 5,
-    role: 0,
+    author: "Rahad Edit by Bayjid",
     shortDescription: {
-      en: "Show all commands"
+      en: "Show command list."
     },
-    longDescription: {
-      en: "Shows a full list of available commands with style."
-    },
-    category: "🧠 System",
+    category: "general",
     guide: {
-      en: "{pn} [name of command]"
+      en: ".help [command name]"
     }
   },
 
-  onStart: async function ({ message, args, commandName, event, threadsData, getLang }) {
-    const allCommands = global.client.commands.values();
+  onStart: async function ({ message, args, event, api }) {
+    const allCommands = global.client.commands ? [...global.client.commands.values()] : [];
     const categories = {};
     let totalCommands = 0;
 
     for (const cmd of allCommands) {
-      if (!categories[cmd.config.category]) {
-        categories[cmd.config.category] = [];
-      }
-      categories[cmd.config.category].push(cmd.config.name);
+      const category = cmd?.config?.category || "Uncategorized";
+      const name = cmd?.config?.name || "unknown";
+
+      if (!categories[category]) categories[category] = [];
+      categories[category].push(name);
       totalCommands++;
     }
 
-    let helpText = `🌟💫💠 ⌜ 𝗥𝗔𝗛𝗔𝗗 𝗕𝗢𝗧 𝗖𝗢𝗠𝗠𝗔𝗡𝗗 𝗧𝗘𝗠𝗣𝗟𝗘 ⌟ 💠💫🌟\n`;
-    helpText += `╭───────────────⭓\n`;
-    helpText += `┃ 🧩 Total Commands: ${totalCommands} 🔮\n`;
-    helpText += `┃ 📘 Usage: .help [command] 🧠\n`;
-    helpText += `╰───────────────⭓\n\n`;
+    const lines = [];
+    lines.push(`\n🌟💫💠 ⌜ 𝗥𝗔𝗛𝗔𝗗 𝗕𝗢𝗧 𝗖𝗢𝗠𝗠𝗔𝗡𝗗 𝗧𝗘𝗠𝗣𝗟𝗘 ⌟ 💠💫🌟`);
+    lines.push("╭───────────────⭓");
+    lines.push(`┃ 🧩 Total Commands: ${totalCommands} 🔮`);
+    lines.push("┃ 📘 Usage: .help [command] 🧠");
+    lines.push("╰───────────────⭓\n");
 
     for (const [category, cmds] of Object.entries(categories)) {
-      helpText += `🔰 𝗖𝗔𝗧𝗘𝗚𝗢𝗥𝗬: ${category}\n`;
-      helpText += `⤷ ${cmds.map(cmd => `.${cmd}`).join("     ")}\n\n`;
+      lines.push(`🎯 ${category.toUpperCase()} 𓆩✨𓆪`);
+      lines.push(" " + cmds.map(cmd => `⤷ ⚡ .${cmd}`).join("     "));
+      lines.push("");
     }
 
-    helpText += `💠━━━━━━━━━━━━━━━━━━━━━━💠\n`;
-    helpText += `       🔱 𝙋𝙊𝙒𝙀𝙍𝙀𝘿 𝘽𝙔 𝑹𝑨𝑯𝑨𝑫 🔱\n`;
-    helpText += `💠━━━━━━━━━━━━━━━━━━━━━━💠`;
+    lines.push("💠━━━━━━━━━━━━━━━━━━━━━━💠");
+    lines.push("🔱 𝗥𝗔𝗛𝗔𝗗 𝗕𝗢𝗧 𝗣𝗢𝗪𝗘𝗥𝗘𝗗 𝗠𝗘𝗡𝗨 🔱");
+    lines.push("💠━━━━━━━━━━━━━━━━━━━━━━💠");
 
-    // Random video attach
-    const randomVideo = videoLinks[Math.floor(Math.random() * videoLinks.length)];
-    const axios = require("axios");
-    const { createWriteStream } = require("fs");
+    const randomVideoId = VIDEO_IDS[Math.floor(Math.random() * VIDEO_IDS.length)];
+    const videoUrl = `https://drive.google.com/uc?id=${randomVideoId}`;
 
-    const tmpPath = path.join(__dirname, "cache", `helpvid_${Date.now()}.mp4`);
-    const writer = createWriteStream(tmpPath);
-
-    const response = await axios({
-      method: "GET",
-      url: randomVideo,
-      responseType: "stream"
-    });
-
-    response.data.pipe(writer);
-    writer.on("finish", () => {
-      message.reply({
-        body: helpText,
-        attachment: fs.createReadStream(tmpPath)
-      }, () => fs.unlinkSync(tmpPath));
-    });
-
-    writer.on("error", (err) => {
-      console.error("Video download failed:", err);
-      message.reply(helpText);
+    message.reply({
+      body: lines.join("\n"),
+      attachment: await global.utils.getStreamFromURL(videoUrl)
     });
   }
 };
