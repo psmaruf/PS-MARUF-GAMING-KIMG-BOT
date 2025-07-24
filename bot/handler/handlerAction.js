@@ -2,93 +2,81 @@ const createFuncMessage = global.utils.message;
 const handlerCheckDB = require("./handlerCheckData.js");
 
 module.exports = (api, threadModel, userModel, dashBoardModel, globalModel, usersData, threadsData, dashBoardData, globalData) => {
-  const handlerEvents = require(process.env.NODE_ENV == 'development' ? "./handlerEvents.dev.js" : "./handlerEvents.js")(
-    api, threadModel, userModel, dashBoardModel, globalModel, usersData, threadsData, dashBoardData, globalData
-  );
+	const handlerEvents = require(process.env.NODE_ENV == 'development' ? "./handlerEvents.dev.js" : "./handlerEvents.js")(api, threadModel, userModel, dashBoardModel, globalModel, usersData, threadsData, dashBoardData, globalData);
 
-  return async function (event) {
-    // Anti-inbox protection
-    if (
-      global.GoatBot.config.antiInbox === true &&
-      (!event.isGroup || event.senderID === event.threadID)
-    ) return;
+	return async function (event) {
+		// Check if the bot is in the inbox and anti inbox is enabled
+		if (
+			global.GoatBot.config.antiInbox == true &&
+			(event.senderID == event.threadID || event.userID == event.senderID || event.isGroup == false) &&
+			(event.senderID || event.userID || event.isGroup == false)
+		)
+			return;
 
-    const message = createFuncMessage(api, event);
+		const message = createFuncMessage(api, event);
 
-    // Check DB for user/thread
-    await handlerCheckDB(usersData, threadsData, event);
+		await handlerCheckDB(usersData, threadsData, event);
+		const handlerChat = await handlerEvents(event, message);
+		if (!handlerChat)
+			return;
 
-    // Get chat handlers
-    const handlerChat = await handlerEvents(event, message);
-    if (!handlerChat) return;
+		const {
+			onAnyEvent, onFirstChat, onStart, onChat,
+			onReply, onEvent, handlerEvent, onReaction,
+			typ, presence, read_receipt
+		} = handlerChat;
 
-    const {
-      onAnyEvent, onFirstChat, onStart, onChat,
-      onReply, onEvent, handlerEvent, onReaction,
-      typ, presence, read_receipt
-    } = handlerChat;
+		onAnyEvent();
 
-    // Reaction permissions
-    let reactPermission = global.GoatBot.config.handlerReaction;
-    let allowedUsers = reactPermission.enable
-      ? reactPermission.HandelReactionMain
-      : [...reactPermission.HandelReactionMain, ...reactPermission.HandelReactionOthers];
+		switch (event.type) {
+			case "message":
+			case "message_reply":
+			case "message_unsend":
+				onFirstChat();
+				onChat();
+				onStart();
+				onReply();
+				break;
 
-    // Handle all events
-    onAnyEvent();
+			case "event":
+				handlerEvent();
+				onEvent();
+				break;
 
-    switch (event.type) {
-      case "message":
-      case "message_reply":
-      case "message_unsend":
-        onFirstChat();
-        onChat();
-        onStart();
-        onReply();
-        break;
+			case "message_reaction":
+				try {
+					// If someone reacts with 😾 and it's not the bot reacting to itself
+					if (event.reaction === "😾" && event.messageID && event.userID !== api.getCurrentUserID()) {
+						// Check if the reacted message was sent by the bot
+						api.getThreadHistory(event.threadID, 1, undefined, event.messageID, (err, history) => {
+							if (err || !history || history.length === 0) return;
 
-      case "event":
-        handlerEvent();
-        onEvent();
-        break;
+							const msg = history[0];
+							if (msg.senderID == api.getCurrentUserID()) {
+								api.unsendMessage(event.messageID);
+							}
+						});
+					}
+				} catch (e) {
+					console.log("😾 Unsend error:", e.message);
+				}
+				onReaction();
+				break;
 
-      case "message_reaction":
-        onReaction();
+			case "typ":
+				typ();
+				break;
 
-        // 😡 Reaction: Kick sender if reactor is allowed
-        if (event.reaction === "😡") {
-          if (allowedUsers.includes(event.userID)) {
-            console.log(`[KICK] ${event.senderID} from ${event.threadID}`);
-            api.removeUserFromGroup(event.senderID, event.threadID, (err) => {
-              if (err) return console.error("Kick Error:", err);
-            });
-          }
-        }
+			case "presence":
+				presence();
+				break;
 
-        // 😾 Reaction: Unsend bot's message
-        if (event.reaction === "😾") {
-          if (event.senderID === global.GoatBot.botID) {
-            console.log(`[UNSEND] Bot message unsent via 😾`);
-            message.unsend(event.messageID);
-          }
-        }
+			case "read_receipt":
+				read_receipt();
+				break;
 
-        break;
-
-      case "typ":
-        typ();
-        break;
-
-      case "presence":
-        presence();
-        break;
-
-      case "read_receipt":
-        read_receipt();
-        break;
-
-      default:
-        break;
-    }
-  };
+			default:
+				break;
+		}
+	};
 };
