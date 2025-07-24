@@ -21,15 +21,19 @@ function roleToText(role) {
   }
 }
 
-function formatCmdLine(cmd) {
-  return `  • ⟿ 𝙲𝙼𝙳: [ ${cmd} ]\n`;
-}
-
 function createVipHeader(title) {
-  const length = 30;
+  const length = 33;
   const padding = Math.floor((length - title.length) / 2);
   const padStr = " ".repeat(padding);
-  return `┏${"━".repeat(length)}┓\n┃${padStr}${title}${padStr}${title.length % 2 === 0 ? "" : " "}┃\n┗${"━".repeat(length)}┛\n`;
+  return `╔═༶═══༺ ${title} ༻═══༶═╗\n`;
+}
+
+function createVipFooter() {
+  return `╚═════════════════════════════╝\n`;
+}
+
+function formatCmdLine(cmd) {
+  return `┊ ${cmd}\n`;
 }
 
 module.exports = {
@@ -58,7 +62,7 @@ module.exports = {
     const videoUrl = `https://drive.google.com/uc?export=download&id=${randId}`;
     const videoPath = path.join(__dirname, "cache", `help_video_${randId}.mp4`);
 
-    // Show specific command detail
+    // Show details of a specific command
     if (args.length > 0 && !args[0].startsWith("-")) {
       const cmdName = args[0].toLowerCase();
       const command = commands.get(cmdName) || commands.get(aliases.get(cmdName));
@@ -74,17 +78,16 @@ module.exports = {
         await fs.writeFile(videoPath, Buffer.from(res.data, "binary"));
 
         const detailMsg =
-`${createVipHeader("✨ 𝓒𝓸𝓶𝓶𝓪𝓷𝓭 𝓓𝓮𝓽𝓪𝓲𝓵 ✨")}
-📝 𝙽𝙰𝙼𝙴     : ${c.name}
-📜 𝙳𝙴𝚂𝙲     : ${c.longDescription?.en || "No description"}
-🎭 𝙰𝙻𝙸𝙰𝚂𝙴𝚂  : ${c.aliases?.length ? c.aliases.join(", ") : "None"}
-📦 𝚅𝙴𝚁𝚂𝙸𝙾𝙽  : ${c.version || "1.0"}
-👥 𝚁𝙾𝙻𝙴    : ${roleText}
-⏰ 𝙲𝙾𝙾𝙻𝙳𝙾𝚆𝙽 : ${c.countDown || 1}s
-👤 𝙰𝚄𝚃𝙷𝙾𝚁  : ${c.author || "Unknown"}
-💡 𝚄𝚂𝙰𝙶𝙴   : ${usage}
-
-┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛`;
+`${createVipHeader("𝕮𝖔𝖒𝖒𝖆𝖓𝖉 𝕯𝖊𝖙𝖆𝖎𝖑")}
+✦ 𝙽𝙰𝙼𝙴 ⚜ : ${c.name}
+✦ 𝙳𝙴𝚂𝙲 ⚜ : ${c.longDescription?.en || "No description"}
+✦ 𝙰𝙻𝙸𝙰𝚂𝙴𝚂 🜚 : ${c.aliases?.length ? c.aliases.join(", ") : "None"}
+✦ 𝚅𝙴𝚁𝚂𝙸𝙾𝙽 🜚 : ${c.version || "1.0"}
+✦ 𝚁𝙾𝙻𝙴 ⚛ : ${roleText}
+✦ 𝙲𝙾𝙾𝙻𝙳𝙾𝚆𝙽 ⚛ : ${c.countDown || 1}s
+✦ 𝙰𝚄𝚃𝙷𝙾𝚁 🜚 : ${c.author || "Unknown"}
+✦ 𝚄𝚂𝙰𝙶𝙴 ⚜ : ${usage}
+${createVipFooter()}`;
 
         await message.reply({ body: detailMsg, attachment: fs.createReadStream(videoPath) }, async () => {
           try { await fs.unlink(videoPath); } catch {}
@@ -119,18 +122,19 @@ module.exports = {
       return message.reply(`🚫 No commands found for ${filterMsg}.`);
     }
 
-    let msg = createVipHeader("Rahad Bot Menu");
+    let msg = createVipHeader("𝕽𝖆𝖍𝖆𝖉 𝕯𝖔𝖒𝖎𝖓𝖎𝖔𝖓");
 
     Object.keys(categories).sort().forEach(cat => {
-      msg += `▶ CATEGORY: ${cat.toUpperCase()}\n`;
+      msg += `✦ 𝙲𝙰𝚃𝙴𝙶𝙾𝚁𝚈 — ${cat} ☄️\n`;
       categories[cat].sort().forEach(cmd => {
-        msg += formatCmdLine(cmd);
+        msg += formatCmdLine(`🜚 『 ${cmd} 』`);
       });
       msg += "\n";
     });
 
-    msg += `➤ 𝚃𝚘𝚝𝚊𝚕 𝙲𝚘𝚖𝚖𝚊𝚗𝚍𝚜: ${totalCommands}\n`;
-    msg += `➤ 𝙷𝚒𝚗𝚝: Use [${prefix}help <command>] for details\n`;
+    msg += `➸ 𝕋𝕠𝕥𝕒𝕝 𝒞𝑜𝓂𝓂𝒶𝓃𝒹𝓈: ${totalCommands}\n`;
+    msg += `➸ 𝙷𝚒𝚗𝚝: Use 『 ${prefix}help <command> 』 for details\n`;
+    msg += createVipFooter();
 
     try {
       const res = await axios.get(videoUrl, { responseType: "arraybuffer" });
