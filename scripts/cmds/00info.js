@@ -1,57 +1,76 @@
-const fs = require("fs-extra");
 const axios = require("axios");
-const path = __dirname + "/cache/rahad_vibe.jpg";
+const fs = require("fs-extra");
+const path = require("path");
 
 module.exports = {
   config: {
     name: "info",
-    version: "999.1",
-    author: "💚 𝐑𝐀𝐇𝐀𝐃 𝐓𝐇𝐄 𝐋𝐄𝐆𝐄𝐍𝐃 💚",
-    countDown: 5,
+    aliases: ["inf", "in", "Rahad", "owner"],
+    version: "1.1",
+    author: "Rahad",
     role: 0,
-    shortDescription: "💚 𝗧𝗛𝗘 𝗞𝗜𝗡𝗚 𝗥𝗔𝗛𝗔𝗗 - 𝗕𝗢𝗧 𝗜𝗡𝗙𝗢 💚",
-    longDescription: "Shows bot details in viral attitude style with image",
-    category: "💚 VIBE ZONE"
+    shortDescription: { en: "Show bot & group info" },
+    longDescription: { en: "Stylish HUD info with video 📽️" },
+    category: "INFO",
+    guide: { en: "{pn}" }
   },
 
-  onStart: async function ({ api, event }) {
-    if (!fs.existsSync(path)) {
-      const img = await axios.get("https://iili.io/FO141Ra.jpg", { responseType: "stream" });
-      img.data.pipe(fs.createWriteStream(path));
-      await new Promise(resolve => img.data.on("end", resolve));
-    }
+  onStart: async function ({ api, event, threadsData }) {
+    const time = require("moment-timezone").tz("Asia/Dhaka").format("DD/MM/YYYY, hh:mm:ss A");
+    const uptime = process.uptime();
+    const hours = Math.floor(uptime / 3600);
+    const minutes = Math.floor((uptime % 3600) / 60);
+    const seconds = Math.floor(uptime % 60);
+    const uptimeStr = `${hours}h ${minutes}m ${seconds}s`;
 
-    const msg = `
-╭━━━━━━━━━━━━━━━╮
-💚 𝙍 𝘼 𝙃 𝘼 𝘿 – 𝙏𝙃𝙀 𝙊𝙉𝙀 & 𝙊𝙉𝙇𝙔 💚
-╰━━━━━━━━━━━━━━━╯
+    const threadInfo = await threadsData.get(event.threadID);
+    const allUsers = threadInfo.members || [];
+    const admins = allUsers.filter(u => u.admin);
+    const male = allUsers.filter(u => u.gender === "MALE").length;
+    const female = allUsers.filter(u => u.gender === "FEMALE").length;
+    const totalMsg = threadInfo.totalMsg || 0;
 
-🥷 𝗡𝗔𝗠𝗘      : 💥 𝑹𝑨𝑯𝑨𝑫 
-📍 𝗙𝗔𝗖𝗘𝗕𝗢𝗢𝗞 : fb.com/rahad  
-🆔 𝗙𝗕 𝗨𝗜𝗗   : 100089824095204  
-🏴‍☠️ 𝗧𝗘𝗔𝗠      : 𝐑𝐀𝐇𝐀𝐃 𝐓𝐇𝐄 𝐊𝐈𝐌𝐆 – 𝐀𝐈 𝐀𝐑𝐌𝐘  
-👑 𝗥𝗢𝗟𝗘      : 𝐅𝐀𝐓𝐇𝐄𝐑 𝐎𝐅 𝐁𝐎𝐓𝐒
-
-━━━━━━━━━━━━━━━━━━
-
-🤖 𝗕𝗢𝗧       : 🧬 𝑹𝑨𝑯𝑨𝑫 - 𝑨𝑰 𝑽𝟐  
-🧠 𝗩𝗘𝗥𝗦𝗜𝗢𝗡   : 2.0 (𝗨𝗡𝗕𝗘𝗔𝗧𝗔𝗕𝗟𝗘 💣)  
-📡 𝗨𝗣𝗧𝗜𝗠𝗘    : 24/7 ⚡  
-🚀 𝗣𝗜𝗡𝗚      : 🔥 FASTER THAN LIGHT  
-📀 𝗦𝗬𝗦𝗧𝗘𝗠   : GOAT BOT V2 + RAHAD ENGINE
-
-━━━━━━━━━━━━━━━━━━
-
-🧬 𝗣𝗢𝗪𝗘𝗥𝗘𝗗 𝗕𝗬 : 𝐑𝐀𝐇𝐀𝐃 - 𝐁𝐎𝐒𝐒 𝐎𝐅 𝐁𝐎𝗧𝗦
-
-╭──────────────╮  
-💚 𝗠𝗔𝗗𝗘 𝗪𝗜𝗧𝗛 𝗟𝗢𝗩𝗘 𝗕𝗬 𝗥𝗔𝗛𝗔𝗗 💚  
-╰──────────────╯
+    const body = `
+┌────────[ 🤖 𝗥𝗔𝗛𝗔𝗗_𝗕𝗢𝗧 ]────────┐
+│ 👑 𝗢𝘄𝗻𝗲𝗿: 𝗥𝗮𝗵𝗮𝗱
+│ 🛠 𝗠𝗼𝗱𝘀: 𝗥𝗮𝗵𝗮𝗱 
+│ 🌍 𝗟𝗼𝗰𝗮𝘁𝗶𝗼𝗻: Asia/Dhaka
+│ 🔋 𝗦𝘁𝗮𝘁𝘂𝘀: ⚡ Online
+├────────[ ⏱️ 𝗦𝗬𝗦𝗧𝗘𝗠 ]────────┤
+│ 🕒 𝗧𝗶𝗺𝗲: ${time}
+│ ♻️ 𝗨𝗽𝘁𝗶𝗺𝗲: ${uptimeStr}
+│ ⚡ 𝗣𝗶𝗻𝗴: ${Date.now() - event.timestamp}ms
+├───────[ 💬 𝗚𝗥𝗢𝗨𝗣 ]────────┤
+│ 💬 𝗡𝗮𝗺𝗲: ${threadInfo.threadName}
+│ 🆔 𝗜𝗗: ${event.threadID}
+│ 👥 𝗠𝗲𝗺𝗯𝗲𝗿𝘀: ${allUsers.length} (♂ ${male} / ♀ ${female})
+│ 🛡 𝗔𝗱𝗺𝗶𝗻𝘀: ${admins.length}
+│ 💌 𝗠𝗲𝘀𝘀𝗮𝗴𝗲𝘀: ${totalMsg}
+└────────────────────────────┘
     `.trim();
 
-    api.sendMessage({
-      body: msg,
-      attachment: fs.createReadStream(path)
-    }, event.threadID);
+    const videoUrl = "https://drive.google.com/uc?export=download&id=16Xu5T2RpboZs4Nv-F0T_tIWlqjv074Vd";
+    const videoPath = path.join(__dirname, "rahad_info_video.mp4");
+
+    try {
+      const res = await axios.get(videoUrl, { responseType: "stream" });
+      const writer = fs.createWriteStream(videoPath);
+      res.data.pipe(writer);
+
+      writer.on("finish", () => {
+        api.sendMessage({
+          body,
+          attachment: fs.createReadStream(videoPath)
+        }, event.threadID, () => fs.unlinkSync(videoPath));
+      });
+
+      writer.on("error", err => {
+        console.error("Video download failed:", err);
+        api.sendMessage(body, event.threadID);
+      });
+    } catch (err) {
+      console.error("Error fetching video:", err);
+      return api.sendMessage(body, event.threadID);
+    }
   }
 };
