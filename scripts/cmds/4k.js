@@ -1,69 +1,43 @@
 const axios = require("axios");
-const fs = require("fs");
-const path = require("path");
 
-module.exports = {
-  config: {
-    name: "4k",
-    aliases: ["remini"],
-    version: "1.2",
-    author: "nexo_here",
-    countDown: 5,
-    role: 0,
-    shortDescription: "Upscale image to 4K",
-    longDescription: "Upscale an image using smfahim.xyz",
-    category: "image",
-    guide: {
-      en: "{pn} [url] or reply to an image"
-    },
-    usePrefix: true
-  },
+const baseApiUrl = async () => {
+  const base = await axios.get(
+    `https://raw.githubusercontent.com/Blankid018/D1PT0/main/baseApiUrl.json`
+  );
+  return base.data.mostakim;
+};
+module.exports.config = {
+  name: "4k",
+  aliases: ["4k", "remini"],
+  category: "enhanced",
+  author: "Romim"
+};
 
-  onStart: async function ({ api, event, args }) {
-    let url = null;
+module.exports.onStart = async ({ api, event, args }) => {
+  try {
 
-    // ✅ If user replied to an image
-    if (event.messageReply?.attachments?.[0]?.type === "photo") {
-      url = event.messageReply.attachments[0].url;
+    if (!event.messageReply || !event.messageReply.attachments || !event.messageReply.attachments[0]) {
+      return api.sendMessage("𝐏𝐥𝐞𝐚𝐬𝐞 𝐫𝐞𝐩𝐥𝐲 𝐭𝐨 𝐚𝐧 𝐢𝐦𝐚𝐠𝐞 𝐰𝐢𝐭𝐡 𝐭𝐡𝐞 𝐜𝐨𝐦𝐦𝐚𝐧𝐝.", event.threadID, event.messageID);
     }
 
-    // ✅ Or used direct image URL
-    if (!url && args[0]?.startsWith("http")) {
-      url = args[0];
-    }
 
-    // ❌ If no valid image source
-    if (!url) {
-      return api.sendMessage("❌ Reply to an image or provide a direct image URL.", event.threadID, event.messageID);
-    }
+    const Romim = event.messageReply?.attachments[0]?.url;
 
-    try {
-      api.setMessageReaction("🔄", event.messageID, () => {}, true);
 
-      const res = await axios.get(`https://smfahim.xyz/4k?url=${encodeURIComponent(url)}`);
-      if (!res.data?.status || !res.data?.image) {
-        api.setMessageReaction("❌", event.messageID, () => {}, true);
-        return api.sendMessage("⚠️ Upscaling failed. Try another image.", event.threadID, event.messageID);
-      }
+    const apiUrl = (`${await baseApiUrl()}/remini?input=${encodeURIComponent(Romim)}`);
+ 
 
-      const img = await axios.get(res.data.image, { responseType: "arraybuffer" });
-      const imgPath = path.join(__dirname, "cache", `${event.senderID}_4k.jpg`);
-      fs.writeFileSync(imgPath, Buffer.from(img.data, "binary"));
+    const imageStream = await axios.get(apiUrl,{
+      responseType: 'stream'
+    });
 
-      api.sendMessage(
-        { attachment: fs.createReadStream(imgPath) },
-        event.threadID,
-        () => {
-          fs.unlinkSync(imgPath);
-          api.setMessageReaction("✅", event.messageID, () => {}, true);
-        },
-        event.messageID
-      );
 
-    } catch (err) {
-      console.error("[4k] Error:", err.message);
-      api.setMessageReaction("❌", event.messageID, () => {}, true);
-      api.sendMessage("❌ Error occurred while processing image.", event.threadID, event.messageID);
-    }
+    api.sendMessage({
+      body: "𝐇𝐞𝐫𝐞 𝐢𝐬 𝐲𝐨𝐮𝐫 𝐞𝐧𝐡𝐚𝐧𝐜𝐞𝐝 𝐩𝐡𝐨𝐭𝐨",
+      attachment: imageStream.data
+    }, event.threadID, event.messageID);
+
+  } catch (e) {
+    api.sendMessage(`Error: ${e.message}`, event.threadID, event.messageID);
   }
 };
