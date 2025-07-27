@@ -31,77 +31,55 @@ module.exports = {
     category: "⚙️ Configuration",
     guide: {
       en:
-`╔════════════════════════════════════╗
- ║       ⚙️ 𝗣𝗥𝗘𝗙𝗜𝗫 𝗖𝗢𝗠𝗠𝗔𝗡𝗗 𝗚𝗨𝗜𝗗𝗘 ⚙️       ║
- ╠════════════════════════════════════╣
- ║ 📌 𝗖𝗵𝗮𝗻𝗴𝗲 𝗴𝗿𝗼𝘂𝗽 𝗽𝗿𝗲𝗳𝗶𝘅:                    ║
- ║    💬 {pn} <new prefix>                  ║
- ║ 📌 𝗖𝗵𝗮𝗻𝗴𝗲 𝗴𝗹𝗼𝗯𝗮𝗹 𝗽𝗿𝗲𝗳𝗶𝘅 (admin only):       ║
- ║    💬 {pn} <new prefix> -g               ║
- ║ 📌 𝗥𝗲𝘀𝗲𝘁 𝘁𝗼 𝗱𝗲𝗳𝗮𝘂𝗹𝘁:                       ║
- ║    💬 {pn} reset                         ║
- ║ 📌 𝗦𝗵𝗼𝘄 𝗰𝘂𝗿𝗿𝗲𝗻𝘁 𝗽𝗿𝗲𝗳𝗶𝘅 + 𝘃𝗶𝗱𝗲𝗼:             ║
- ║    💬 prefix                             ║
- ╚════════════════════════════════════╝`
+        "╔═『 𝗣𝗥𝗘𝗙𝗜𝗫 𝗖𝗢𝗠𝗠𝗔𝗡𝗗𝗦 』═╗\n"
+        + "🔧 {pn} <new prefix> ➤ Change group prefix\n"
+        + "🌐 {pn} <new prefix> -g ➤ Global prefix (admin only)\n"
+        + "♻️ {pn} reset ➤ Reset to default prefix\n"
+        + "💬 Type `prefix` ➤ Show current prefix + video\n"
+        + "╚════════════════════════╝"
     }
   },
 
   langs: {
     en: {
       reset:
-`╭━━━༺ 𝓟𝓻𝓮𝓯𝓲𝔁 𝓡𝓮𝓼𝓮𝓽 ༻━━━╮
-┃
-┃  ✅ 𝗥𝗲𝘀𝗲𝘁 𝗰𝗼𝗺𝗽𝗹𝗲𝘁𝗲𝗱! 𝗡𝗲𝘄 𝗣𝗿𝗲𝗳𝗶𝘅:  ✨  %1  ✨
-┃
-╰━━━━━━━━━━━━━━━━━━━━━╯`,
+        "╔═『 ♻️ 𝗥𝗘𝗦𝗘𝗧 𝗣𝗥𝗘𝗙𝗜𝗫 』═╗\n"
+        + "✅ Prefix reset to default: [ %1 ]\n"
+        + "╚════════════════════════╝",
 
       onlyAdmin:
-`╭━━━༺ 𝓐𝓬𝓬𝓮𝓼𝓼 𝓓𝓮𝓷𝓲𝓮𝓭 ༻━━━╮
-┃
-┃  ⛔ 𝗢𝗻𝗹𝘆 𝗔𝗱𝗺𝗶𝗻𝘀 𝗰𝗮𝗻 𝗰𝗵𝗮𝗻𝗴𝗲 𝗴𝗹𝗼𝗯𝗮𝗹 𝗽𝗿𝗲𝗳𝗶𝘅!
-┃
-╰━━━━━━━━━━━━━━━━━━━━━━╯`,
+        "╔═『 🚫 𝗔𝗖𝗖𝗘𝗦𝗦 𝗗𝗘𝗡𝗜𝗘𝗗 』═╗\n"
+        + "❌ Only 🛡️ Bot Admins can change the 🌍 global prefix.\n"
+        + "╚════════════════════════╝",
 
       confirmGlobal:
-`╭━━━༺ 𝓒𝓸𝓷𝓯𝓲𝓻𝓶 𝓖𝓵𝓸𝓫𝓪𝓵 ༻━━━╮
-┃
-┃  🔄 𝗥𝗲𝗮𝗰𝘁 𝘁𝗼 𝗰𝗼𝗻𝗳𝗶𝗿𝗺 𝗚𝗟𝗢𝗕𝗔𝗟 𝗽𝗿𝗲𝗳𝗶𝘅 𝗰𝗵𝗮𝗻𝗴𝗲.
-┃
-╰━━━━━━━━━━━━━━━━━━━━━━━╯`,
+        "╔═『 🌐 𝗚𝗟𝗢𝗕𝗔𝗟 𝗣𝗥𝗘𝗙𝗜𝗫 』═╗\n"
+        + "🛠️ You're changing the global prefix.\n"
+        + "✅ React to confirm.\n"
+        + "╚════════════════════════╝",
 
       confirmThisThread:
-`╭━━━༺ 𝓒𝓸𝓷𝓯𝓲𝓻𝓶 𝗚𝗿𝗼𝘂𝗽 ༻━━━╮
-┃
-┃  🔄 𝗥𝗲𝗮𝗰𝘁 𝘁𝗼 𝗰𝗼𝗻𝗳𝗶𝗿𝗺 𝗚𝗥𝗢𝗨𝗣 𝗽𝗿𝗲𝗳𝗶𝘅 𝗰𝗵𝗮𝗻𝗴𝗲.
-┃
-╰━━━━━━━━━━━━━━━━━━━━━━━╯`,
+        "╔═『 💬 𝗚𝗥𝗢𝗨𝗣 𝗣𝗥𝗘𝗙𝗜𝗫 』═╗\n"
+        + "🛠️ You're changing this group's prefix.\n"
+        + "✅ React to confirm.\n"
+        + "╚════════════════════════╝",
 
       successGlobal:
-`╭━━━༺ 𝓢𝓾𝓬𝓬𝓮𝓼𝓼 𝓖𝓵𝓸𝓫𝓪𝓵 ༻━━━╮
-┃
-┃  🎉 𝗚𝗹𝗼𝗯𝗮𝗹 𝗽𝗿𝗲𝗳𝗶𝘅 𝘀𝘂𝗰𝗰𝗲𝘀𝘀𝗳𝘂𝗹𝗹𝘆 𝗰𝗵𝗮𝗻𝗴𝗲𝗱 𝘁𝗼:
-┃  💠  %1
-┃
-╰━━━━━━━━━━━━━━━━━━━━━━╯`,
+        "╔═『 ✅ 𝗦𝗨𝗖𝗖𝗘𝗦𝗦 』═╗\n"
+        + "🌍 Global Prefix updated to ➤ [ %1 ]\n"
+        + "╚════════════════════════╝",
 
       successThisThread:
-`╭━━━༺ 𝓢𝓾𝓬𝓬𝓮𝓼𝓼 𝗚𝗿𝗼𝘂𝗽 ༻━━━╮
-┃
-┃  🎉 𝗚𝗿𝗼𝘂𝗽 𝗽𝗿𝗲𝗳𝗶𝘅 𝘀𝘂𝗰𝗰𝗲𝘀𝘀𝗳𝘂𝗹𝗹𝘆 𝗰𝗵𝗮𝗻𝗴𝗲𝗱 𝘁𝗼:
-┃  💠  %1
-┃
-╰━━━━━━━━━━━━━━━━━━━━━━━╯`,
+        "╔═『 ✅ 𝗦𝗨𝗖𝗖𝗘𝗦𝗦 』═╗\n"
+        + "💬 Group Prefix updated to ➤ [ %1 ]\n"
+        + "╚════════════════════════╝",
 
-      myPrefix: `
-╔══════════════════════════════╗
- ║          ✨ 𝓟𝓻𝓮𝓯𝓲𝔁 𝓢𝓽𝓪𝓽𝓾𝓼 ✨          ║
- ╠══════════════════════════════╣
- ║ 🌍 𝗚𝗹𝗼𝗯𝗮𝗹:  »  %1
- ║ 💬 𝗚𝗿𝗼𝘂𝗽:   »  %2
- ║ ⏰ 𝗦𝗲𝗿𝘃𝗲𝗿 𝘁𝗶𝗺𝗲: »  %3
- ╠═══════════════════════════════╣
- ║ 💡 𝗧𝘆𝗽𝗲 𝘁𝗵𝗶𝘀:  %2help 𝗳𝗼𝗿 𝗰𝗼𝗺𝗺𝗮𝗻𝗱𝘀!
- ╚═══════════════════════════════╝`
+      myPrefix:
+        "╔═━「 🧩 𝐁𝐎𝐓 𝐏𝐑𝐄𝐅𝐈𝐗 」━═╗\n"
+        + "🪄 𝗚𝗹𝗼𝗯𝗮𝗹 : ❯❯ 〘 %1 〙\n"
+        + "💬 𝗚𝗿𝗼𝘂𝗽  : ❯❯ 〘 %2 〙\n"
+        + "⏰ 𝗧𝗶𝗺𝗲   : ❯❯ %3\n"
+        + "╚═━「 🛠️ 𝗧𝘆𝗽𝗲 `%2help` 𝗳𝗼𝗿 𝗰𝗺𝗱𝘀 」━═╝"
     }
   },
 
@@ -114,37 +92,38 @@ module.exports = {
     }
 
     const newPrefix = args[0];
-    const setGlobal = args[1] === "-g";
+    const formSet = {
+      commandName,
+      author: event.senderID,
+      newPrefix,
+      setGlobal: args[1] === "-g"
+    };
 
-    if (setGlobal && role < 2) {
+    if (formSet.setGlobal && role < 2) {
       return message.reply(getLang("onlyAdmin"));
     }
 
-    const confirmMessage = setGlobal ? getLang("confirmGlobal") : getLang("confirmThisThread");
-
+    const confirmMessage = formSet.setGlobal ? getLang("confirmGlobal") : getLang("confirmThisThread");
     return message.reply(confirmMessage, (err, info) => {
       if (info?.messageID) {
-        global.GoatBot.onReaction.set(info.messageID, {
-          author: event.senderID,
-          newPrefix,
-          setGlobal,
-          messageID: info.messageID
-        });
+        formSet.messageID = info.messageID;
+        global.GoatBot.onReaction.set(info.messageID, formSet);
       }
     });
   },
 
   onReaction: async function ({ message, threadsData, event, Reaction, getLang }) {
-    if (event.userID !== Reaction.author) return;
+    const { author, newPrefix, setGlobal } = Reaction;
+    if (event.userID !== author) return;
 
-    if (Reaction.setGlobal) {
-      global.GoatBot.config.prefix = Reaction.newPrefix;
+    if (setGlobal) {
+      global.GoatBot.config.prefix = newPrefix;
       fs.writeFileSync(global.client.dirConfig, JSON.stringify(global.GoatBot.config, null, 2));
-      return message.reply(getLang("successGlobal", Reaction.newPrefix));
+      return message.reply(getLang("successGlobal", newPrefix));
     }
 
-    await threadsData.set(event.threadID, Reaction.newPrefix, "data.prefix");
-    return message.reply(getLang("successThisThread", Reaction.newPrefix));
+    await threadsData.set(event.threadID, newPrefix, "data.prefix");
+    return message.reply(getLang("successThisThread", newPrefix));
   },
 
   onChat: async function ({ event, message, getLang, threadsData }) {
@@ -166,7 +145,7 @@ module.exports = {
 
       writer.on("finish", () => {
         message.reply({ body: info, attachment: fs.createReadStream(videoPath) }, () => {
-          fs.unlink(videoPath, () => {}); // cleanup
+          fs.unlink(videoPath, () => {});
         });
       });
 
