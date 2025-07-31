@@ -1,62 +1,108 @@
 module.exports = {
-	config: {
-		name: "balance",
-		aliases: ["bal"],
-		version: "1.2",
-		author: "NTKhang (Mostakim)",
-		countDown: 5,
-		role: 0,
-		description: {
-			vi: "xem số tiền hiện có của bạn hoặc người được tag",
-			en: "view your money or the money of the tagged person"
-		},
-		category: "economy",
-		guide: {
-			vi: "   {pn}: xem số tiền của bạn"
-				+ "\n   {pn} <@tag>: xem số tiền của người được tag",
-			en: "   {pn}: view your money"
-				+ "\n   {pn} <@tag>: view the money of the tagged person"
-		}
-	},
+  config: {
+    name: "balance",
+    aliases: ["bal", "$", "cash"],
+    version: "3.2",
+    author: "xnil6x",
+    countDown: 3,
+    role: 0,
+    description: "💰 Premium Economy System with Stylish Display",
+    category: "economy",
+    guide: {
+      en: "╔════✦ Usage Guide ✦════╗\n"
+        + "║ ➤ {pn} - Check your balance\n"
+        + "║ ➤ {pn} @user - Check others\n"
+        + "║ ➤ {pn} t @user amount - Transfer\n"
+        + "║ ➤ {pn} [reply] - Check replied user's balance\n"
+        + "╚══════════════════════╝"
+    }
+  },
 
-	langs: {
-		vi: {
-			money: "Bạn đang có %1$",
-			moneyOf: "%1 đang có %2$"
-		},
-		en: {
-			money: "You have %1$",
-			moneyOf: "%1 has %2$"
-		}
-	},
+  onStart: async function ({ message, event, args, usersData, prefix }) {
+    const { senderID, messageReply, mentions } = event;
 
-	onStart: async function ({ message, usersData, event, getLang }) {
-		const formatBoldSerif = (text) => {
-			const boldSerifMap = {
-				a: "𝐚", b: "𝐛", c: "𝐜", d: "𝐝", e: "𝐞", f: "𝐟", g: "𝐠", h: "𝐡", i: "𝐢", j: "𝐣",
-				k: "𝐤", l: "𝐥", m: "𝐦", n: "𝐧", o: "𝐨", p: "𝐩", q: "𝐪", r: "𝐫", s: "𝐬", t: "𝐭",
-				u: "𝐮", v: "𝐯", w: "𝐰", x: "𝐱", y: "𝐲", z: "𝐳",
-				A: "𝐀", B: "𝐁", C: "𝐂", D: "𝐃", E: "𝐄", F: "𝐅", G: "𝐆", H: "𝐇", I: "𝐈", J: "𝐉",
-				K: "𝐊", L: "𝐋", M: "𝐌", N: "𝐍", O: "𝐎", P: "𝐏", Q: "𝐐", R: "𝐑", S: "𝐒", T: "𝐓",
-				U: "𝐔", V: "𝐕", W: "𝐖", X: "𝐗", Y: "𝐘", Z: "𝐙",
-				"0": "𝟎", "1": "𝟏", "2": "𝟐", "3": "𝟑", "4": "𝟒", "5": "𝟓", "6": "𝟔", "7": "𝟕", "8": "𝟖", "9": "𝟗",
-				"$": "$", ".": ".", ",": ",", ":": ":", "-": "-", " ": " "
-			};
-			return text.split('').map(char => boldSerifMap[char] || char).join('');
-		};
+    const formatMoney = (amount) => {
+      if (isNaN(amount)) return "$0";
+      amount = Number(amount);
+      const scales = [
+        { value: 1e15, suffix: 'Q' },
+        { value: 1e12, suffix: 'T' },
+        { value: 1e9, suffix: 'B' },
+        { value: 1e6, suffix: 'M' },
+        { value: 1e3, suffix: 'k' }
+      ];
+      const scale = scales.find(s => amount >= s.value);
+      if (scale) {
+        const scaledValue = amount / scale.value;
+        return `$${scaledValue.toFixed(1)}${scale.suffix}`;
+      }
+      return `$${amount.toLocaleString()}`;
+    };
 
-		if (Object.keys(event.mentions).length > 0) {
-			const uids = Object.keys(event.mentions);
-			let msg = "";
-			for (const uid of uids) {
-				const userMoney = await usersData.get(uid, "money");
-				const name = event.mentions[uid].replace("@", "");
-				msg += formatBoldSerif(getLang("moneyOf", name, userMoney)) + '\n';
-			}
-			return message.reply(msg.trim());
-		}
+    const createFlatDisplay = (title, contentLines) => {
+      return `✨ ${title} ✨\n` + 
+        contentLines.map(line => `➤ ${line}`).join('\n') + '\n';
+    };
 
-		const userData = await usersData.get(event.senderID);
-		return message.reply(formatBoldSerif(getLang("money", userData.money)));
-	}
+    if (args[0]?.toLowerCase() === 't') {
+      const targetID = Object.keys(mentions)[0] || messageReply?.senderID;
+      const amount = parseFloat(args[args.length - 1]);
+
+      if (!targetID || isNaN(amount)) {
+        return message.reply(createFlatDisplay("Invalid Usage", [
+          `Use: ${prefix}balance t @user amount`
+        ]));
+      }
+
+      if (amount <= 0) return message.reply(createFlatDisplay("Error", ["Amount must be positive."]));
+      if (senderID === targetID) return message.reply(createFlatDisplay("Error", ["You can't send money to yourself."]));
+
+      const [sender, receiver] = await Promise.all([
+        usersData.get(senderID),
+        usersData.get(targetID)
+      ]);
+
+      if (sender.money < amount) {
+        return message.reply(createFlatDisplay("Insufficient Balance", [
+          `You need ${formatMoney(amount - sender.money)} more.`
+        ]));
+      }
+
+      await Promise.all([
+        usersData.set(senderID, { money: sender.money - amount }),
+        usersData.set(targetID, { money: receiver.money + amount })
+      ]);
+
+      const receiverName = await usersData.getName(targetID);
+      return message.reply(createFlatDisplay("Transfer Complete", [
+        `To: ${receiverName}`,
+        `Sent: ${formatMoney(amount)}`,
+        `Your New Balance: ${formatMoney(sender.money - amount)}`
+      ]));
+    }
+
+    if (messageReply?.senderID && !args[0]) {
+      const targetID = messageReply.senderID;
+      const name = await usersData.getName(targetID);
+      const money = await usersData.get(targetID, "money");
+      return message.reply(createFlatDisplay(`${name}'s Balance`, [
+        `💰 Balance: ${formatMoney(money)}`
+      ]));
+    }
+
+    if (Object.keys(mentions).length > 0) {
+      const balances = await Promise.all(
+        Object.entries(mentions).map(async ([uid, name]) => {
+          const money = await usersData.get(uid, "money");
+          return `${name.replace('@', '')}: ${formatMoney(money)}`;
+        })
+      );
+      return message.reply(createFlatDisplay("User Balances", balances));
+    }
+
+    const userMoney = await usersData.get(senderID, "money");
+    return message.reply(createFlatDisplay("Your Balance", [
+      `💵 ${formatMoney(userMoney)}`,
+    ]));
+  }
 };
