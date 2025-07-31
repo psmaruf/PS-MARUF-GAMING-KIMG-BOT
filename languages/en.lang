@@ -89,52 +89,74 @@ handlerCheckData.cantCreateThread=Groups with id '%1' cannot be written to the d
 handlerCheckData.cantCreateUser=Users with id '%1' cannot be written to the database!
 
 # bot/handler/handlerEvents.js
-handlerEvents.userBanned=⛔『 𝗔𝗖𝗖𝗘𝗦𝗦 𝗕𝗟𝗢𝗖𝗞𝗘𝗗 』\n❖ 𝗥𝗲𝗮𝘀𝗼𝗻: %1\n❖ 𝗧𝗶𝗺𝗲: %2\n❖ 𝗨𝘀𝗲𝗿 𝗜𝗗: %3
+handlerEvents.userBanned =
+  "⛔️『 𝗔𝗖𝗖𝗘𝗦𝗦 ✦ 𝗗𝗘𝗡𝗜𝗘𝗗 』\n🔸 𝗥𝗘𝗔𝗦𝗢𝗡: 『 %1 』\n🕰 𝗧𝗜𝗠𝗘: 『 %2 』\n🆔 𝗨𝗦𝗘𝗥 𝗜𝗗: 『 %3 』";
 
-handlerEvents.threadBanned=🚫『 𝗚𝗥𝗢𝗨𝗣 𝗕𝗔𝗡𝗡𝗘𝗗 』\n❖ 𝗥𝗲𝗮𝘀𝗼𝗻: %1\n❖ 𝗧𝗶𝗺𝗲: %2\n❖ 𝗧𝗵𝗿𝗲𝗮𝗱 𝗜𝗗: %3
+handlerEvents.threadBanned =
+  "🚫『 𝗚𝗥𝗢𝗨𝗣 ✦ 𝗕𝗔𝗡𝗡𝗘𝗗 』\n🔸 𝗥𝗘𝗔𝗦𝗢𝗡: 『 %1 』\n🕰 𝗧𝗜𝗠𝗘: 『 %2 』\n💬 𝗚𝗥𝗢𝗨𝗣 𝗜𝗗: 『 %3 』";
 
-handlerEvents.onlyAdminBox=🔐 『 𝗔𝗗𝗠𝗜𝗡-𝗢𝗡𝗟𝗬 𝗠𝗢𝗗𝗘 』\n➤ Only group 𝗮𝗱𝗺𝗶𝗻𝘀 can use this bot 💼
+handlerEvents.onlyAdminBox =
+  "🔐『 𝗔𝗗𝗠𝗜𝗡 𝗠𝗢𝗗𝗘 ✦ 𝗢𝗡𝗟𝗬 』\n👑 Only 𝗔𝗗𝗠𝗜𝗡𝗦 can use this feature 📛";
 
-handlerEvents.onlyAdminBot=🛑 『 𝗥𝗘𝗦𝗧𝗥𝗜𝗖𝗧𝗘𝗗 𝗔𝗖𝗖𝗘𝗦𝗦 』\n➤ Only 𝗯𝗼𝘁 𝗼𝘄𝗻𝗲𝗿𝘀 can use this feature 👑
+handlerEvents.onlyAdminBot =
+  "🛑『 𝗣𝗥𝗜𝗩𝗔𝗧𝗘 ✦ 𝗔𝗖𝗖𝗘𝗦𝗦 』\n⚙️ Only 𝗢𝗪𝗡𝗘𝗥𝗦 can use this command 🔐";
 
-handlerEvents.commandNotFound=😵 『 𝗖𝗢𝗠𝗠𝗔𝗡𝗗 𝗡𝗢𝗧 𝗙𝗢𝗨𝗡𝗗 』\n» Try %2help to explore commands 🔍
+handlerEvents.commandNotFound =
+  "😵『 𝗨𝗡𝗞𝗡𝗢𝗪𝗡 ✦ 𝗖𝗢𝗠𝗠𝗔𝗡𝗗 』\n❓ Try ➤ %2help to view commands 📜";
 
-handlerEvents.commandNotFound2=⚠️ 『 𝗣𝗥𝗘𝗙𝗜𝗫 𝗗𝗘𝗧𝗘𝗖𝗧𝗘𝗗 』\n» That’s a prefix, not a command 😅\n» Use: %1help
+handlerEvents.commandNotFound2 =
+  "⚠️『 𝗣𝗥𝗘𝗙𝗜𝗫 ✦ 𝗢𝗡𝗟𝗬 』\n📎 That is a prefix, not a command 😅\n💡 Use ➤ %1help";
 
-handlerEvents.commandSyntaxError=📘 『 𝗦𝗬𝗡𝗧𝗔𝗫 𝗘𝗥𝗥𝗢𝗥 』\n» Wrong usage detected 🧩\n» Use: %1help %2 for correct syntax
+handlerEvents.commandSyntaxError =
+  "📘『 𝗦𝗬𝗡𝗧𝗔𝗫 ✦ 𝗘𝗥𝗥𝗢𝗥 』\n🔍 Wrong usage detected 💢\n✅ Use ➤ %1help %2 for correct usage";
 
-handlerEvents.onlyAdmin=🔒 『 𝗔𝗗𝗠𝗜𝗡 𝗣𝗘𝗥𝗠𝗜𝗦𝗦𝗜𝗢𝗡 𝗥𝗘𝗤𝗨𝗜𝗥𝗘𝗗 』\n» Only group admins can run "%1"
+handlerEvents.onlyAdmin =
+  "🔒『 𝗔𝗗𝗠𝗜𝗡 ✦ 𝗣𝗘𝗥𝗠𝗜𝗦𝗦𝗜𝗢𝗡 𝗡𝗘𝗘𝗗𝗘𝗗 』\n👤 Only 𝗔𝗗𝗠𝗜𝗡𝗦 can run ➤ %1";
 
-handlerEvents.onlyAdminToUseOnReply=🔁 『 𝗔𝗗𝗠𝗜𝗡-𝗥𝗘𝗣𝗟𝗬 𝗥𝗘𝗦𝗧𝗥𝗜𝗖𝗧𝗘𝗗 』\n» Only admins can reply with "%1"
+handlerEvents.onlyAdminToUseOnReply =
+  "🔁『 𝗔𝗗𝗠𝗜𝗡 ✦ 𝗥𝗘𝗣𝗟𝗬 𝗢𝗡𝗟𝗬 』\n📨 Only 𝗔𝗗𝗠𝗜𝗡𝗦 can reply using ➤ %1";
 
-handlerEvents.onlyAdminToUseOnReaction=🎭 『 𝗔𝗗𝗠𝗜𝗡-𝗥𝗘𝗔𝗖𝗧 𝗢𝗡𝗟𝗬 』\n» Only admins can react with "%1"
+handlerEvents.onlyAdminToUseOnReaction =
+  "🎭『 𝗔𝗗𝗠𝗜𝗡 ✦ 𝗥𝗘𝗔𝗖𝗧 𝗢𝗡𝗟𝗬 』\n🔄 Only 𝗔𝗗𝗠𝗜𝗡𝗦 can react with ➤ %1";
 
-handlerEvents.onlyAdminBot2=⚙️ 『 𝗕𝗢𝗧 𝗢𝗪𝗡𝗘𝗥 𝗖𝗢𝗠𝗠𝗔𝗡𝗗 』\n» Only bot devs can use "%1"
+handlerEvents.onlyAdminBot2 =
+  "⚙️『 𝗗𝗘𝗩 ✦ 𝗖𝗢𝗠𝗠𝗔𝗡𝗗 𝗢𝗡𝗟𝗬 』\n💻 Only 𝗢𝗪𝗡𝗘𝗥𝗦 can use ➤ %1";
 
-handlerEvents.onlyAdminBot2ToUseOnReply=🛡 『 𝗕𝗢𝗧 𝗢𝗪𝗡𝗘𝗥 𝗥𝗘𝗣𝗟𝗬 』\n» Only devs can reply with "%1"
+handlerEvents.onlyAdminBot2ToUseOnReply =
+  "🛡『 𝗢𝗪𝗡𝗘𝗥 ✦ 𝗥𝗘𝗣𝗟𝗬 𝗢𝗡𝗟𝗬 』\n📩 Only 𝗢𝗪𝗡𝗘𝗥𝗦 can reply ➤ %1";
 
-handlerEvents.onlyAdminBot2ToUseOnReaction=💢 『 𝗕𝗢𝗧 𝗢𝗪𝗡𝗘𝗥 𝗥𝗘𝗔𝗖𝗧𝗜𝗢𝗡 』\n» Only devs can react using "%1"
+handlerEvents.onlyAdminBot2ToUseOnReaction =
+  "💢『 𝗢𝗪𝗡𝗘𝗥 ✦ 𝗥𝗘𝗔𝗖𝗧 𝗢𝗡𝗟𝗬 』\n🔁 Only 𝗢𝗪𝗡𝗘𝗥𝗦 can react with ➤ %1";
 
-handlerEvents.waitingForCommand=⏳ 『 𝗖𝗢𝗢𝗟𝗗𝗢𝗪𝗡 𝗜𝗡 𝗣𝗥𝗢𝗚𝗥𝗘𝗦𝗦 』\n» Please wait %1s before using this again 💤
+handlerEvents.waitingForCommand =
+  "⏳『 𝗪𝗔𝗜𝗧 ✦ 𝗖𝗢𝗢𝗟𝗗𝗢𝗪𝗡 』\n🕒 Please wait ➤ %1s to use again 💤";
 
-handlerEvents.errorOccurred=💥 『 𝗖𝗢𝗠𝗠𝗔𝗡𝗗 𝗘𝗥𝗥𝗢𝗥 』\n✦ Module: %1\n✦ Command: "%2"\n✦ Details:\n%3
+handlerEvents.errorOccurred =
+  "💥『 𝗘𝗥𝗥𝗢𝗥 ✦ 𝗢𝗖𝗖𝗨𝗥𝗥𝗘𝗗 』\n📦 Module: %1\n📌 Command: \"%2\"\n📄 Info:\n%3";
 
-handlerEvents.errorOccurred2=💥 『 𝗢𝗡𝗖𝗛𝗔𝗧 𝗙𝗔𝗜𝗟𝗘𝗗 』\n✦ Module: %1\n✦ Command: "%2"\n✦ Details:\n%3
+handlerEvents.errorOccurred2 =
+  "💥『 𝗖𝗛𝗔𝗧 ✦ 𝗙𝗔𝗜𝗟𝗘𝗗 』\n📦 Module: %1\n📌 Command: \"%2\"\n📄 Info:\n%3";
 
-handlerEvents.errorOccurred3=💥 『 𝗥𝗘𝗣𝗟𝗬 𝗘𝗥𝗥𝗢𝗥 』\n✦ Module: %1\n✦ Command: "%2"\n✦ Details:\n%3
+handlerEvents.errorOccurred3 =
+  "💥『 𝗥𝗘𝗣𝗟𝗬 ✦ 𝗘𝗥𝗥𝗢𝗥 』\n📦 Module: %1\n📌 Command: \"%2\"\n📄 Info:\n%3";
 
-handlerEvents.errorOccurred4=💥 『 𝗥𝗘𝗔𝗖𝗧𝗜𝗢𝗡 𝗙𝗔𝗜𝗟𝗨𝗥𝗘 』\n✦ Module: %1\n✦ Command: "%2"\n✦ Details:\n%3
+handlerEvents.errorOccurred4 =
+  "💥『 𝗥𝗘𝗔𝗖𝗧 ✦ 𝗙𝗔𝗜𝗟𝗘𝗗 』\n📦 Module: %1\n📌 Command: \"%2\"\n📄 Info:\n%3";
 
-handlerEvents.errorOccurred5=💥 『 𝗢𝗡𝗘𝗩𝗘𝗡𝗧 𝗘𝗥𝗥𝗢𝗥 (v1) 』\n✦ Module: %1\n✦ Command: "%2"\n✦ Details:\n%3
+handlerEvents.errorOccurred5 =
+  "💥『 𝗘𝗩𝗘𝗡𝗧 ✦ 𝗘𝗥𝗥𝗢𝗥 (v1) 』\n📦 Module: %1\n📌 Command: \"%2\"\n📄 Info:\n%3";
 
-handlerEvents.errorOccurred6=💥 『 𝗢𝗡𝗘𝗩𝗘𝗡𝗧 𝗘𝗥𝗥𝗢𝗥 (v2) 』\n✦ Module: %1\n✦ Command: "%2"\n✦ Details:\n%3
+handlerEvents.errorOccurred6 =
+  "💥『 𝗘𝗩𝗘𝗡𝗧 ✦ 𝗘𝗥𝗥𝗢𝗥 (v2) 』\n📦 Module: %1\n📌 Command: \"%2\"\n📄 Info:\n%3";
 
-handlerEvents.errorOccurred7=💥 『 𝗔𝗡𝗬𝗘𝗩𝗘𝗡𝗧 𝗘𝗥𝗥𝗢𝗥 』\n✦ Module: %1\n✦ Command: "%2"\n✦ Details:\n%3
+handlerEvents.errorOccurred7 =
+  "💥『 𝗚𝗘𝗡𝗘𝗥𝗔𝗟 ✦ 𝗘𝗥𝗥𝗢𝗥 』\n📦 Module: %1\n📌 Command: \"%2\"\n📄 Info:\n%3";
 
-handlerEvents.cannotFindCommandName=❓『 𝗥𝗘𝗣𝗟𝗬 𝗙𝗔𝗜𝗟𝗘𝗗 』\n» Command name not found in context! 💀
+handlerEvents.cannotFindCommandName =
+  "❓『 𝗖𝗢𝗠𝗠𝗔𝗡𝗗 ✦ 𝗡𝗢𝗧 𝗙𝗢𝗨𝗡𝗗 』\n💀 Command name not recognized in context";
 
-handlerEvents.cannotFindCommand=❓『 𝗖𝗢𝗠𝗠𝗔𝗡𝗗 𝗡𝗢𝗧 𝗘𝗫𝗜𝗦𝗧 』\n» Cannot execute reply using "%1"
-
+handlerEvents.cannotFindCommand =
+  "❓『 𝗥𝗘𝗣𝗟𝗬 ✦ 𝗖𝗢𝗠𝗠𝗔𝗡𝗗 𝗙𝗔𝗜𝗟𝗘𝗗 』\n🚫 Cannot execute ➤ \"%1\"";
 # bot/autoUptime.js
 autoUptime.autoUptimeTurnedOn=AutoUptime mode turned on
 
