@@ -12,6 +12,22 @@ const VIDEO_IDS = [
   "1-vD0mv3wGnAM0rmztYQuzxB2by2EgCMX"
 ];
 
+// Fancy fonts + emojis for variety
+const fontStyles = [
+  (txt) => `🦇 𝔊𝔬𝔱𝔥𝔦𝔠 𝔚𝔬𝔯𝔡𝔰: ${txt} 🕸️`,
+  (txt) => `✨ 𝓔𝓵𝓮𝓰𝓪𝓷𝓽 𝓢𝓹𝓮𝓵𝓵: ${txt} 🕯️`,
+  (txt) => `🩸 𝕯𝖆𝖗𝖐 𝕾𝖎𝖌𝖓: ${txt} 🗡️`,
+  (txt) => `🔮 𝓜𝔂𝓼𝓽𝓲𝓬 𝓕𝓵𝓪𝓻𝓮: ${txt} 🌙`,
+  (txt) => `🕷️ 𝕾𝖕𝖎𝖉𝖊𝖗 𝕷𝖎𝖓𝖊: ${txt} 🕸️`,
+  (txt) => `💀 𝙽𝚎𝚌𝚛𝚘 𝚃𝚎𝚡𝚝: ${txt} ☠️`,
+  (txt) => `🦉 𝕲𝖍𝖔𝖘𝖙 𝕽𝖊𝖒𝖓𝖆𝖓𝖙: ${txt} 👻`,
+];
+
+// Cycle font styles for commands
+function cycleFontStyle(i, txt) {
+  return fontStyles[i % fontStyles.length](txt);
+}
+
 function roleToText(role) {
   switch (role) {
     case 0: return "🧛 Everyone";
@@ -21,22 +37,35 @@ function roleToText(role) {
   }
 }
 
+// Rahad Bot Themed Header
 function gothicHeader(title) {
-  return `🦇━╦═══『 ${title} 』═══╦━🦇\n`;
+  return `
+╭━━━✧━━━━━━━━✧━━━╮
+  🕯️ 𝕽𝖆𝖍𝖆𝖉 𝕭𝖔𝖙 𝕲𝖔𝖙𝖍𝖎𝖈 𝕳𝖊𝖑𝖕 🕯️
+╰━━━━━━━━━━✧━━━━━━╯
+       『 ${title} 』
+━━━━━━━━━━━━━━━━━━
+`;
 }
 
+// Your requested gothicFooter2
 function gothicFooter() {
-  return `🕷️━╩═══⛧ 𝔈𝔫𝔡 𝔬𝔣 𝔥𝔢𝔩𝔭 ⛧═══╩━🕷️\n`;
+  return `
+╭━━━༒━━━━━༒━━━╮
+  🦉 𝑹𝒂𝒉𝒂𝒅 𝑩𝒐𝒕 𝑺𝒑𝒆𝒍𝒍𝒔 𝑬𝒏𝒅 🦉
+╰━━━━༒━━━━༒━━━╯
+`;
 }
 
-function gothicLine(cmd) {
-  return `┃ 🩸 『 ${cmd} 』\n`;
+// Each command line with cycling fancy fonts + emoji
+function gothicLine(cmd, idx) {
+  return `┃ ${cycleFontStyle(idx, `『 ${cmd} 』`)}\n`;
 }
 
 module.exports = {
   config: Object.freeze({
     name: "help",
-    version: "2.0",
+    version: "2.1",
     author: "Rahad",
     countDown: 5,
     role: 0,
@@ -59,7 +88,7 @@ module.exports = {
 
     const randId = VIDEO_IDS[Math.floor(Math.random() * VIDEO_IDS.length)];
     const videoUrl = `https://drive.google.com/uc?export=download&id=${randId}`;
-    const videoPath = path.join(__dirname, "cache", `goth_help_${randId}_${Date.now()}.mp4`);
+    const videoPath = path.join(__dirname, "cache", `rahad_help_${randId}_${Date.now()}.mp4`);
 
     if (args.length > 0 && !args[0].startsWith("-")) {
       const cmdName = args[0].toLowerCase();
@@ -120,8 +149,8 @@ ${gothicFooter()}`;
 
     Object.keys(categories).sort().forEach(cat => {
       msg += `\n🕯️ CATEGORY: ✦ ${cat.toUpperCase()} ✦\n`;
-      categories[cat].sort().forEach(cmd => {
-        msg += gothicLine(cmd);
+      categories[cat].sort().forEach((cmd, i) => {
+        msg += gothicLine(cmd, i);
       });
     });
 
