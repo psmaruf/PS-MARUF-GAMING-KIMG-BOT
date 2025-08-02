@@ -1,19 +1,19 @@
 module.exports = {
-	config: {
-		name: "nude",
-		aliases: ["nangai"],
-		version: "1.0",
-		author: "BaYjid",
-		countDown: 5,
-		role: 2,
-		shortDescription: "send you pic of nude",
-		longDescription: "sends u pic of girls nude",
-		category: "18+",
-		guide: "{pn}"
-	},
+  config: {
+    name: "nude",
+    aliases: ["nangai"],
+    version: "1.0",
+    author: "M",
+    countDown: 0,
+    role: 2,
+    shortDescription: "send you pic of nude",
+    longDescription: "sends u pic of girls nude",
+    category: "image",
+    guide: "{pn}"
+  },
 
-	onStart: async function ({ message }) {
-	 var link = [ 
+  onStart: async function ({ message }) {
+   var link = [ 
 "https://i.imgur.com/T5BPkRG.jpg",
 "https://i.imgur.com/69MT3Wg.jpg",
 "https://i.imgur.com/z6EtvVm.jpg",
@@ -106,10 +106,22 @@ module.exports = {
 "https://i.imgur.com/1oaM7ai.jpg",
 "https://i.imgur.com/Urx9Ijl.jpg",
 "https://i.imgur.com/QYGOZuK.jpg",
-	]
+"https://imgur.com/rmjJQjs.jpg",
+"https://imgur.com/rmjJQjs.jpg",
+"https://imgur.com/undefined.jpg",
+"https://imgur.com/FqxvN2B.jpg",     
+"https://imgur.com/8ALbZvB.jpg",
+"https://imgur.com/ibGhrj8.jpg",
+"https://imgur.com/uAHcolU.jpg",    
+"https://imgur.com/eSALnBu.jpg",
+"https://imgur.com/eSALnBu.jpg",
+"https://imgur.com/vlKL5Th.jpg",
+"https://imgur.com/dKaOIDi.jpg",
+"https://imgur.com/FXCcYtv.jpg",
+]
 let img = link[Math.floor(Math.random()*link.length)]
 message.send({
-	body: '「 Sugar Mumma Ahh💦🥵 」',attachment: await global.utils.getStreamFromURL(img)
+  body: '「 𝕊𝕦𝕘𝕒𝕣 𝕄𝕦𝕞𝕞𝕒 𝔸𝕙𝕙💦🥵 」',attachment: await global.utils.getStreamFromURL(img)
 })
 }
-		 }
+     }
