@@ -2,7 +2,6 @@ let isTimerRunning = false;
 let intervalID = null;
 let lastSentTime = null;
 
-// তোমার Google Drive direct download video লিংকগুলো এখানে রাখো
 const videoLinks = [
   "https://drive.google.com/uc?export=download&id=19xGnVk43vdYrm-z45xDeTpn9MQOqfcMm",
   "https://drive.google.com/uc?export=download&id=1AJ_eVwWX_xVRJRlBNLbtQzyRLCBR5aNG",
@@ -55,19 +54,16 @@ function getRandomVideo() {
 }
 
 function runTimer(api) {
-  if (intervalID) return; // prevent multiple timers
+  if (intervalID) return;
   intervalID = setInterval(async () => {
     try {
       const now = getCurrentTime();
-
       if (now !== lastSentTime && timerData[now]) {
         lastSentTime = now;
         const threads = global.GoatBot.config?.whiteListModeThread?.whiteListThreadIds || [];
         const videoUrl = getRandomVideo();
         const messageText = `╭───────────────⏰\n│  ${timerData[now].message}\n╰───────────────🕒 ${now}`;
-
         for (const threadID of threads) {
-          // Send video attachment + message body
           await api.sendMessage({
             body: messageText,
             attachment: await global.utils.getStreamFromURL(videoUrl)
@@ -106,7 +102,7 @@ module.exports = {
     }
   },
 
-  onLoad: async ({ api }) => {
+  onStart: async ({ api }) => {
     start(api);
   },
 
