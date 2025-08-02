@@ -1,85 +1,52 @@
-const fs = require("fs-extra");
-const axios = require("axios");
-const path = require("path");
-const Canvas = require("canvas");
+const axios = require('axios');
+const jimp = require("jimp");
+const fs = require("fs");
 
 module.exports = {
-  config: {
-    name: "crush",
-    version: "1.0",
-    author: "Rahad",
-    countDown: 5,
-    role: 0,
-    shortDescription: "Crush photo maker",
-    longDescription: "Make a crush edit using your and tagged user's profile picture",
-    category: "image",
-    guide: {
-      en: "{pn} @mention"
-    }
-  },
+ config: {
+ name: "crush",
+ aliases: [],
+ version: "1.0",
+ author: "Rahad",
+ countDown: 5,
+ role: 0,
+ shortdescription: "هديه للكراش",
+ longDescription: "wholesome avatar for crush/lover",
+ category: "love",
+ guide: ""
+ },
 
-  onStart: async function ({ api, event }) {
-    const mention = Object.keys(event.mentions)[0];
-    if (!mention)
-      return api.sendMessage("❌ Please mention someone to make a crush with!", event.threadID);
+ onStart: async function ({ message, event, args }) {
+ const mention = Object.keys(event.mentions);
+ if (mention.length == 0) {
+ message.reply("TAG");
+ return;
+ }
 
-    const senderID = event.senderID;
-    const targetID = mention;
+ let one;
+ if (mention.length == 1) {
+ one = mention[0];
+ } else {
+ one = mention[0];
+ }
 
-    const bgPath = path.join(__dirname, "..", "..", "cache", "crush.png");
-    if (!fs.existsSync(bgPath))
-      return api.sendMessage("❌ Background image (crush.png) not found in /cache!", event.threadID);
-
-    const getAvatar = async (uid) => {
-      const url = `https://graph.facebook.com/${uid}/picture?height=512&width=512&access_token=350685531728|62f8ce9f74b12f84c123cc23437a4a32`;
-      const pathImg = path.join(__dirname, `tmp_${uid}.png`);
-      const res = await axios.get(url, { responseType: "arraybuffer" });
-      fs.writeFileSync(pathImg, res.data);
-      const img = await Canvas.loadImage(pathImg);
-      fs.unlinkSync(pathImg);
-      return img;
-    };
-
-    try {
-      const canvas = Canvas.createCanvas(736, 414); // your image size
-      const ctx = canvas.getContext("2d");
-
-      const background = await Canvas.loadImage(bgPath);
-      ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
-
-      const senderAvatar = await getAvatar(senderID);
-      const targetAvatar = await getAvatar(targetID);
-
-      // Left photo (you)
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(140, 215, 85, 0, Math.PI * 2, true);
-      ctx.closePath();
-      ctx.clip();
-      ctx.drawImage(senderAvatar, 55, 130, 170, 170);
-      ctx.restore();
-
-      // Right photo (mention)
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(590, 215, 85, 0, Math.PI * 2, true);
-      ctx.closePath();
-      ctx.clip();
-      ctx.drawImage(targetAvatar, 505, 130, 170, 170);
-      ctx.restore();
-
-      const finalPath = path.join(__dirname, `crush_result_${Date.now()}.png`);
-      fs.writeFileSync(finalPath, canvas.toBuffer());
-
-      const msg = {
-        body: `💘 You are crushing on ${event.mentions[mention]}!`,
-        attachment: fs.createReadStream(finalPath)
-      };
-
-      api.sendMessage(msg, event.threadID, () => fs.unlinkSync(finalPath), event.messageID);
-    } catch (err) {
-      console.error(err);
-      return api.sendMessage("⚠️ Error while creating image!", event.threadID);
-    }
-  }
+ try {
+ const imagePath = await bal(one);
+ await message.reply({
+ body: "「 is that true?🥰❤️ 」",
+ attachment: fs.createReadStream(imagePath)
+ });
+ } catch (error) {
+ console.error("Error while running command:", error);
+ await message.reply("an error occurred");
+ }
+ }
 };
+async function bal(one) {
+ const avatarone = await jimp.read(`https://graph.facebook.com/${one}/picture?width=512&height=512&access_token=66262`);
+ const image = await jimp.read("https:/8568379%7Cc1e620fa708a1d5696fb991c1bde56/i.imgur.com/BnWiVXT.jpg");
+ image.resize(512, 512).composite(avatarone.resize(173, 173), 70, 186);
+ const imagePath = "wholesome.png";
+ await image.writeAsync(imagePath);
+ return imagePath;
+}
