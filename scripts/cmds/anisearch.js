@@ -19,7 +19,7 @@ module.exports = {
   config: {
     name: "anisearch",
     aliases: ["animeedit", "animevid"],
-    author: "Vex_kshitiz",
+    author: "Rahad",
     version: "1.1",
     shortDescription: {
       en: "Search and fetch anime edit TikTok videos",
@@ -34,7 +34,7 @@ module.exports = {
   },
 
   onStart: async function ({ api, event, args }) {
-    api.setMessageReaction("✨", event.messageID, () => {}, true);
+    api.setMessageReaction("💥", event.messageID, () => {}, true);
 
     const rawQuery = args.join(" ").trim();
     if (!rawQuery) {
@@ -61,7 +61,6 @@ module.exports = {
 📌 𝗦𝗲𝗮𝗿𝗰𝗵: ${rawQuery}
 🎞️ 𝗩𝗶𝗱𝗲𝗼 𝗧𝗶𝘁𝗹𝗲: ${video.title || "N/A"}
 🌟 𝗩𝗶𝗲𝘄𝘀: ${video.viewCount || "Unknown"}
-🔗 𝗩𝗶𝗱𝗲𝗼 𝗨𝗥𝗟: ${video.videoUrl}
 ╰─────── 𝗥𝗔𝗛𝗔𝗗 𝗕𝗢𝗧 ───────╯
       `;
 
