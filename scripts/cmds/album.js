@@ -1,9 +1,10 @@
 const axios = require("axios");
 const path = require("path");
 const fs = require("fs");
+
 const baseApiUrl = async () => {
   const base = await axios.get(
-    `https://raw.githubusercontent.com/Mostakim0978/D1PT0/refs/heads/main/baseApiUrl.json`,
+    `https://raw.githubusercontent.com/Mostakim0978/D1PT0/refs/heads/main/baseApiUrl.json`
   );
   return base.data.api;
 };
@@ -11,359 +12,217 @@ const baseApiUrl = async () => {
 module.exports = {
   config: {
     name: "album",
-    version: "1.0.0",
+    version: "1.1.0",
     role: 0,
-    author: "Dipto", //Don't Change Author name.
-    description: "Displays album options for selection.",
-    category: "Media",
+    author: "Dipto + Rahad Style",
+    description: "🖼️ Choose and view curated video/photo albums",
+    category: "media",
     countDown: 5,
     guide: {
-      en: "{p}{n} or add [cartoon/photo/lofi/sad/islamic/funny/horny/anime]",
+      en: "🌀 Usage: {p}{n} OR {p}{n} [category]\nExample: {p}{n} cartoon",
     },
   },
 
   onStart: async function ({ api, event, args }) {
-    if (!args[0]) {
-      {
-        api.setMessageReaction("😘", event.messageID, (err) => {}, true);
-      }
-      const albumOptions = [
-        "𝗙𝘂𝗻𝗻𝘆 𝘃𝗶𝗱𝗲𝗼",
-        "𝗜𝘀𝗹𝗮𝗺𝗶𝗰 𝘃𝗶𝗱𝗲𝗼",
-        "𝗦𝗮𝗱 𝘃𝗶𝗱𝗲𝗼",
-        "𝗔𝗻𝗶𝗺𝗲 𝘃𝗶𝗱𝗲𝗼",
-        "𝗖𝗮𝗿𝘁𝗼𝗼𝗻 𝘃𝗶𝗱𝗲𝗼",
-        "𝗟𝗼𝗙𝗶 𝗩𝗶𝗱𝗲𝗼",
-        "𝗛𝗼𝗿𝗻𝘆 𝘃𝗶𝗱𝗲𝗼",
-        "𝗖𝗼𝘂𝗽𝗹𝗲 𝗩𝗶𝗱𝗲𝗼",
-        "𝗙𝗹𝗼𝘄𝗲𝗿 𝗩𝗶𝗱𝗲𝗼",
-        "𝗥𝗮𝗻𝗱𝗼𝗺 𝗣𝗵𝗼𝘁𝗼",
-      ];
-      const message =
-        "❤️‍🩹 𝗖𝗵𝗼𝗼𝘀𝗲 𝗮𝗻 𝗼𝗽𝘁𝗶𝗼𝗻𝘀 𝗕𝗮𝗯𝘆 <💝\n" +
-        "✿━━━━━━━━━━━━━━━━━━━━━━━✿\n" +
-        albumOptions
-          .map((option, index) => `${index + 1}. ${option} 🐤`)
-          .join("\n") +
-        "\n✿━━━━━━━━━━━━━━━━━━━━━━━✿";
-
-      await api.sendMessage(
-        message,
-        event.threadID,
-        (error, info) => {
-          global.GoatBot.onReply.set(info.messageID, {
-            commandName: this.config.name,
-            type: "reply",
-            messageID: info.messageID,
-            author: event.senderID,
-            link: albumOptions,
-          });
-        },
-        event.messageID,
-      );
-    } else if (args[0] === "2") {
-      {
-        api.setMessageReaction("😘", event.messageID, (err) => {}, true);
-      }
-      const albumOptions = [
-        "𝗔𝗲𝘀𝘁𝗵𝗲𝘁𝗶𝗰 𝗩𝗶𝗱𝗲𝗼",
-        "𝗦𝗶𝗴𝗺𝗮 𝗥𝘂𝗹𝗲",
-        "𝗟𝘆𝗿𝗶𝗰𝘀 𝗩𝗶𝗱𝗲𝗼",
-        "𝗖𝗮𝘁 𝗩𝗶𝗱𝗲𝗼",
-        "18+ 𝘃𝗶𝗱𝗲𝗼",
-        "𝗙𝗿𝗲𝗲 𝗙𝗶𝗿𝗲 𝘃𝗶𝗱𝗲𝗼",
-        "𝗙𝗼𝗼𝘁𝗕𝗮𝗹𝗹 𝘃𝗶𝗱𝗲𝗼",
-        "𝗚𝗶𝗿𝗹 𝘃𝗶𝗱𝗲𝗼",
-        "𝗙𝗿𝗶𝗲𝗻𝗱𝘀 𝗩𝗶𝗱𝗲𝗼",
-      ];
-      const message =
-        "❤️‍🩹 𝗖𝗵𝗼𝗼𝘀𝗲 𝗮𝗻 𝗼𝗽𝘁𝗶𝗼𝗻𝘀 𝗕𝗮𝗯𝘆 <💝\n" +
-        "✿━━━━━━━━━━━━━━━━━━━━━━━✿\n" +
-        albumOptions
-          .map((option, index) => `${index + 11}. ${option} 🐤`)
-          .join("\n") +
-        "\n✿━━━━━━━━━━━━━━━━━━━━━━━✿";
-
-      await api.sendMessage(
-        message,
-        event.threadID,
-        (error, info) => {
-          global.GoatBot.onReply.set(info.messageID, {
-            commandName: this.config.name,
-            type: "reply",
-            messageID: info.messageID,
-            author: event.senderID,
-            link: albumOptions,
-          });
-        },
-        event.messageID,
-      );
-    }
-    //------------Video Add--------------//
-    const validCommands = [
-      "cartoon",
-      "photo",
-      "lofi",
-      "sad",
-      "islamic",
-      "funny",
-      "horny",
-      "anime",
-      "love",
-      "baby",
-      "lyrics",
-      "sigma",
-      "photo",
-      "aesthetic",
-      "cat",
-      "flower",
-      "ff",
-      "sex",
-      "girl",
-      "football",
-      "friend",
+    // Main options for first menu
+    const menuOne = [
+      "🎭 𝗙𝘂𝗻𝗻𝘆 𝘃𝗶𝗱𝗲𝗼",
+      "🕌 𝗜𝘀𝗹𝗮𝗺𝗶𝗰 𝘃𝗶𝗱𝗲𝗼",
+      "😢 𝗦𝗮𝗱 𝘃𝗶𝗱𝗲𝗼",
+      "🌸 𝗔𝗻𝗶𝗺𝗲 𝘃𝗶𝗱𝗲𝗼",
+      "🎨 𝗖𝗮𝗿𝘁𝗼𝗼𝗻 𝘃𝗶𝗱𝗲𝗼",
+      "🎶 𝗟𝗼𝗙𝗶 𝗩𝗶𝗱𝗲𝗼",
+      "🔥 𝗛𝗼𝗿𝗻𝘆 𝘃𝗶𝗱𝗲𝗼",
+      "❤️ 𝗖𝗼𝘂𝗽𝗹𝗲 𝗩𝗶𝗱𝗲𝗼",
+      "🌼 𝗙𝗹𝗼𝘄𝗲𝗿 𝗩𝗶𝗱𝗲𝗼",
+      "🌀 𝗥𝗮𝗻𝗱𝗼𝗺 𝗣𝗵𝗼𝘁𝗼",
     ];
-    {
-      api.setMessageReaction("👀", event.messageID, (err) => {}, true);
-    }
-    if (args[0] === "list") {
-      try {
-        const res = await axios.get(`${await baseApiUrl()}/album?list=dipto`);
-        const data = res.data.data;
-        const videoCount = data.match(/\d+/g).reduce((acc, num) => acc + parseInt(num), 0);
-        api.sendMessage(
-          `𝘁𝗼𝘁𝗮𝗹 𝘃𝗶𝗱𝗲𝗼 𝗰𝗼𝘂𝗻𝘁: ${videoCount}`,
-          event.threadID,
-          event.messageID,
-        );
-      } catch (error) {
-        api.sendMessage(`${error}`, event.threadID, event.messageID);
-      }
-    }
-    if (args[0] === "listAll" || args[0] === "listall") {
-      try {
-        const lRes = await axios.get(`${await baseApiUrl()}/album?list=dipto`);
-        const data = lRes.data.data;
-        const videoCount = data.match(/\d+/g).reduce((acc, num) => acc + parseInt(num), 0);
-        api.sendMessage(
-          `🖤 𝗧𝗼𝘁𝗮𝗹 𝘃𝗶𝗱𝗲𝗼 𝗮𝘃𝗮𝗶𝗹𝗮𝗯𝗹𝗲 𝗶𝗻 𝗮𝗹𝗯𝘂𝗺 🩵\n\n${data}\n\n𝘁𝗼𝘁𝗮𝗹 𝘃𝗶𝗱𝗲𝗼 𝗰𝗼𝘂𝗻𝘁: ${videoCount}`,
-          event.threadID,
-          event.messageID,
-        );
-      } catch (error) {
-        api.sendMessage(`${error}`, event.threadID, event.messageID);
-      }
-    }
-    const d1 = args[1] ? args[1].toLowerCase() : "";
-    if (!d1 || !validCommands.includes(d1)) return;
-    if (!event.messageReply || !event.messageReply.attachments) return;
-    const attachment = event.messageReply.attachments[0].url;
-    const URL = attachment;
-    let query;
-    switch (d1) {
-      case "cartoon":
-        query = "addVideo";
-        break;
-      case "photo":
-        query = "addPhoto";
-        break;
-      case "lofi":
-        query = "addLofi";
-        break;
-      case "sad":
-        query = "addSad";
-        break;
-      case "funny":
-        query = "addFunny";
-        break;
-      case "islamic":
-        query = "addIslamic";
-        break;
-      case "horny":
-        query = "addHorny";
-        break;
-      case "anime":
-        query = "addAnime";
-        break;
-      case "love":
-        query = "addLove";
-        break;
-      case "lyrics":
-        query = "addLyrics";
-        break;
-      case "flower":
-        query = "addBaby";
-        break;
-      case "photo":
-        query = "addPhoto";
-        break;
-      case "sigma":
-        query = "addSigma";
-        break;
-      case "aesthetic":
-        query = "addAesthetic";
-        break;
-      case "cat":
-        query = "addCat";
-        break;
-      case "ff":
-        query = "addFf";
-        break;
-      case "sex":
-        query = "addSex";
-        break;
-      case "football":
-        query = "addFootball";
-        break;
-      case "girl":
-        query = "addGirl";
-        break;
-      case "friend":
-        query = "addFriend";
-        break;
-      default:
-        break;
-    }
-    try {
-      const response = await axios.get(
-        `${await baseApiUrl()}/drive?url=${encodeURIComponent(URL)}`,
-      );
-      let imgurLink = response.data.fileUrl;
-      //imgurLink = args.join(" ");
-      const fileExtension = `.mp4` //path.extname(imgurLink);
-      let query2;
-      if (
-        fileExtension === ".jpg" ||
-        fileExtension === ".jpeg" ||
-        fileExtension === ".png"
-      ) {
-        query2 = "addPhoto";
-      } else if (fileExtension === ".mp4") {
-        query2 = query;
-      } else {
-        api.sendMessage(
-          "Invalid file format.",
-          event.threadID,
-          event.messageID,
-        );
-        return;
-      }
-      const svRes = await axios.get(
-        `${await baseApiUrl()}/album?add=${query2}&url=${imgurLink}`,
-      );
-      const data = svRes.data;
-      //   console.log(data);
-      api.sendMessage(
-        `✅ | ${data.data}\n\n🔰 | ${data.data2}\n🔥 | URL: ${imgurLink}`,
+
+    // Second page menu (optional)
+    const menuTwo = [
+      "✨ 𝗔𝗲𝘀𝘁𝗵𝗲𝘁𝗶𝗰 𝗩𝗶𝗱𝗲𝗼",
+      "⚡ 𝗦𝗶𝗴𝗺𝗮 𝗥𝘂𝗹𝗲",
+      "🎤 𝗟𝘆𝗿𝗶𝗰𝘀 𝗩𝗶𝗱𝗲𝗼",
+      "🐱 𝗖𝗮𝘁 𝗩𝗶𝗱𝗲𝗼",
+      "🔞 18+ 𝘃𝗶𝗱𝗲𝗼",
+      "🔥 𝗙𝗿𝗲𝗲 𝗙𝗶𝗿𝗲 𝘃𝗶𝗱𝗲𝗼",
+      "⚽ 𝗙𝗼𝗼𝘁𝗕𝗮𝗹𝗹 𝘃𝗶𝗱𝗲𝗼",
+      "👧 𝗚𝗶𝗿𝗹 𝘃𝗶𝗱𝗲𝗼",
+      "👫 𝗙𝗿𝗶𝗲𝗻𝗱𝘀 𝗩𝗶𝗱𝗲𝗼",
+    ];
+
+    // Function to create a pretty styled menu string
+    const buildMenu = (arr, startIndex = 1) => {
+      let str ="╭━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╮\n";
+      str += ". │         🎬 𝗥𝗔𝗛𝗔𝗗 𝗔𝗟𝗕𝗨𝗠 🎬      │\n";
+      str += ". ╰━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╯\n\n";
+      arr.forEach((item, idx) => {
+        str += `⮞  ${startIndex + idx}. ${item}\n`;
+      });
+      str +=
+        "\n✍️ 𝗥𝗲𝗽𝗹𝘆 𝗮 𝗻𝘂𝗺𝗯𝗲𝗿 𝘁𝗼 𝗰𝗵𝗼𝗼𝘀𝗲 𝗮𝗹𝗯𝘂𝗺\n" +
+        "🆔 𝗦𝗲𝗻𝗱 𝗻𝗮𝗺𝗲 𝗮𝗳𝘁𝗲𝗿 𝗰𝗼𝗺𝗺𝗮𝗻𝗱 𝗳𝗼𝗿 𝗾𝘂𝗶𝗰𝗸 𝗿𝗲𝘀𝘂𝗹𝘁\n\n" +
+        "✿━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━✿";
+      return str;
+    };
+
+    // If no args, show first menu
+    if (!args[0]) {
+      api.setMessageReaction("🎉", event.messageID, () => {}, true);
+      const msg = buildMenu(menuOne, 1);
+      return api.sendMessage(
+        msg,
         event.threadID,
-        event.messageID,
+        (err, info) => {
+          if (err) return console.error(err);
+          global.GoatBot.onReply.set(info.messageID, {
+            commandName: this.config.name,
+            author: event.senderID,
+            type: "page1",
+            messageID: info.messageID,
+            options: menuOne,
+          });
+        },
+        event.messageID
+      );
+    }
+
+    // If arg is 2, show second menu
+    if (args[0] === "2") {
+      api.setMessageReaction("🎉", event.messageID, () => {}, true);
+      const msg = buildMenu(menuTwo, 11);
+      return api.sendMessage(
+        msg,
+        event.threadID,
+        (err, info) => {
+          if (err) return console.error(err);
+          global.GoatBot.onReply.set(info.messageID, {
+            commandName: this.config.name,
+            author: event.senderID,
+            type: "page2",
+            messageID: info.messageID,
+            options: menuTwo,
+          });
+        },
+        event.messageID
+      );
+    }
+
+    // Handle direct category name usage
+    const category = args[0].toLowerCase();
+
+    // List of valid categories with query params
+    const validCategories = {
+      funny: "funny",
+      islamic: "islamic",
+      sad: "sad",
+      anime: "anime",
+      cartoon: "cartoon",
+      lofi: "lofi",
+      horny: "horny",
+      couple: "love",
+      flower: "flower",
+      random: "photo",
+      aesthetic: "aesthetic",
+      sigma: "sigma",
+      lyrics: "lyrics",
+      cat: "cat",
+      "18+": "sex",
+      ff: "ff",
+      football: "football",
+      girl: "girl",
+      friends: "friend",
+    };
+
+    if (!validCategories[category]) {
+      return api.sendMessage(
+        "❌ Invalid category! Use the command without arguments to see the list.",
+        event.threadID,
+        event.messageID
+      );
+    }
+
+    api.setMessageReaction("🔍", event.messageID, () => {}, true);
+
+    try {
+      const baseUrl = await baseApiUrl();
+      const res = await axios.get(`${baseUrl}/album?type=${validCategories[category]}`);
+      const videoUrl = res.data.data;
+
+      // Download the media before sending
+      const ext = path.extname(videoUrl);
+      const filename = path.join(__dirname, `assets/album_${Date.now()}${ext}`);
+
+      const mediaResponse = await axios.get(videoUrl, {
+        responseType: "arraybuffer",
+        headers: { "User-Agent": "Mozilla/5.0" },
+      });
+      fs.writeFileSync(filename, Buffer.from(mediaResponse.data, "binary"));
+
+      const caption = `
+╭━━━━━━━━━━━━━━━━━━━━━━━╮
+┃ 🎬 𝗥𝗔𝗛𝗔𝗗 𝗕𝗢𝗧 𝗔𝗹𝗯𝘂𝗺 ┃
+┣━━━━━━━━━━━━━━━━━━━━━━━┫
+┃ 📁 𝗖𝗮𝘁𝗲𝗴𝗼𝗿𝘆: ${category.toUpperCase()}      
+┃ 📥 𝗗𝗼𝘄𝗻𝗹𝗼𝗮𝗱 𝗟𝗶𝗻𝗸: ${videoUrl}
+╰━━━━━━━━━━━━━━━━━━━━━━━╯
+      `.trim();
+
+      await api.sendMessage(
+        {
+          body: caption,
+          attachment: fs.createReadStream(filename),
+        },
+        event.threadID,
+        () => fs.unlinkSync(filename),
+        event.messageID
       );
     } catch (error) {
-      console.error("Error:", error);
+      console.error(error);
       api.sendMessage(
-        `Failed to convert image.\n${error}`,
+        "❌ অনুগ্রহ করে সঠিক ক্যাটাগরি নির্বাচন করুন বা পরে আবার চেষ্টা করুন।",
         event.threadID,
-        event.messageID,
+        event.messageID
       );
     }
   },
+
   onReply: async function ({ api, event, Reply }) {
-    const admin = "100044327656712";
-    api.unsendMessage(Reply.messageID);
-    if (event.type == "message_reply") {
-      const reply = parseInt(event.body);
-      if (isNaN(reply)) {
-        return api.sendMessage(
-          "🔰 | Please reply with either 1 - 14",
-          event.threadID,
-          event.messageID,
-        );
-      }
-      let query;
-      let cp;
-      if (reply === 1) {
-        query = "funny";
-        cp = "𝗡𝗮𝘄 𝗕𝗮𝗯𝘆 𝗙𝘂𝗻𝗻𝘆 𝘃𝗶𝗱𝗲𝗼 <🤣";
-      } else if (reply === 2) {
-        query = "islamic";
-        cp = "𝗡𝗮𝘄 𝗕𝗮𝗯𝘆 𝗜𝘀𝗹𝗮𝗺𝗶𝗰 𝘃𝗶𝗱𝗲𝗼 <😇";
-      } else if (reply === 3) {
-        query = "sad";
-        cp = "𝗡𝗮𝘄 𝗕𝗮𝗯𝘆 𝗦𝗮𝗱 𝘃𝗶𝗱𝗲𝗼 <🥺";
-      } else if (reply === 4) {
-        query = "anime";
-        cp = "𝗡𝗮𝘄 𝗕𝗮𝗯𝘆 𝗮𝗻𝗶𝗺 𝘃𝗶𝗱𝗲𝗼 <😘";
-      } else if (reply === 5) {
-        query = "video";
-        cp = "𝗡𝗮𝘄 𝗕𝗮𝗯𝘆 𝗖𝗮𝗿𝘁𝗼𝗼𝗻 𝘃𝗶𝗱𝗲𝗼 <😇";
-      } else if (reply === 6) {
-        query = "lofi";
-        cp = "𝗡𝗮𝘄 𝗕𝗮𝗯𝘆 𝗟𝗼𝗳𝗶 𝘃𝗶𝗱𝗲𝗼 <😇";
-      } else if (reply === 7 && event.senderID === admin) {
-        query = "horny";
-        cp = "𝗡𝗮𝘄 𝗕𝗮𝗯𝘆 𝗛𝗼𝗿𝗻𝘆 𝘃𝗶𝗱𝗲𝗼 <🥵";
-      } else if (reply === 8) {
-        query = "love";
-        cp = "𝗡𝗮𝘄 𝗕𝗮𝗯𝘆 𝗟𝗼𝘃𝗲 𝘃𝗶𝗱𝗲𝗼 <😍";
-      } else if (reply === 9) {
-        query = "baby";
-        cp = "𝗡𝗮𝘄 𝗕𝗮𝗯𝘆 𝗖𝘂𝘁𝗲 𝗕𝗮𝗯𝘆 𝘃𝗶𝗱𝗲𝗼 <🧑‍🍼";
-      } else if (reply === 10) {
-        query = "photo";
-        cp = "𝗡𝗮𝘄 𝗕𝗮𝗯𝘆 𝗥𝗮𝗻𝗱𝗼𝗺 𝗣𝗵𝗼𝘁𝗼 <😙";
-      } else if (reply === 11) {
-        query = "aesthetic";
-        cp = "𝗡𝗮𝘄 𝗕𝗮𝗯𝘆 𝗔𝗲𝘀𝘁𝗵𝗲𝘁𝗶𝗰 𝗩𝗶𝗱𝗲𝗼 <😙";
-      } else if (reply === 12) {
-        query = "sigma";
-        cp = "𝗡𝗮𝘄 𝗕𝗮𝗯𝘆 𝗦𝗶𝗴𝗺𝗮 𝘃𝗶𝗱𝗲𝗼 <🐤";
-      } else if (reply === 13) {
-        query = "lyrics";
-        cp = "𝗡𝗮𝘄 𝗕𝗮𝗯𝘆 𝗟𝘆𝗿𝗶𝗰𝘀 𝘃𝗶𝗱𝗲𝗼 <🥰";
-      } else if (reply === 14) {
-        query = "cat";
-        cp = "𝗡𝗮𝘄 𝗕𝗮𝗯𝘆 𝗖𝗮𝘁 𝗩𝗶𝗱𝗲𝗼 <😙";
-      } else if (reply === 15 && event.senderID === admin) {
-        query = "sex";
-        cp = "𝗡𝗮𝘄 𝗕𝗮𝗯𝘆 𝗦𝗲𝘅 𝘃𝗶𝗱𝗲𝗼 <😙";
-      } else if (reply === 16) {
-        query = "ff";
-        cp = "𝗡𝗮𝘄 𝗕𝗮𝗯𝘆 𝗙𝗿𝗲𝗲 𝗙𝗶𝗿𝗲 𝗩𝗶𝗱𝗲𝗼 <😙";
-      } else if (reply === 17) {
-        query = "football";
-        cp = "𝗡𝗮𝘄 𝗕𝗮𝗯𝘆 𝗙𝗼𝗼𝘁𝗯𝗮𝗹𝗹 𝘃𝗶𝗱𝗲𝗼<😙";
-      } else if (reply === 18) {
-        query = "girl";
-        cp = "𝗡𝗮𝘄 𝗕𝗮𝗯𝘆 𝗚𝗶𝗿𝗹 𝘃𝗶𝗱𝗲𝗼<😙";
-      } else if (reply === 19) {
-        query = "friend";
-        cp = "𝗡𝗮𝘄 𝗕𝗮𝗯𝘆 𝗙𝗿𝗶𝗲𝗻𝗱𝘀 𝘃𝗶𝗱𝗲𝗼<😙";
-      }
-      try {
-        const res = await axios.get(
-          `${await baseApiUrl()}/album?type=${query}`,
-        );
-        const imgUrl = res.data.data;
-        const ex = path.extname(imgUrl);
-        const imgRes = await axios.get(imgUrl, { responseType: "arraybuffer" , headers: { 'User-Agent': 'Mozilla/5.0' } });
-        const filename = __dirname + `/assets/dipto_${Date.now()}.mp4`;
-        fs.writeFileSync(filename, Buffer.from(imgRes.data, "binary"));
-        api.sendMessage(
-          {
-            body: `${cp}\n\n𝗗𝗼𝘄𝗻𝗹𝗼𝗮𝗱 𝗨𝗿𝗹: ${imgUrl}`,
-            attachment: fs.createReadStream(filename),
-          },
-          event.threadID,
-          () => fs.unlinkSync(filename),
-          event.messageID,
-        );
-      } catch (error) {
-        api.sendMessage(
-          "An error occurred while fetching the media.",
-          event.threadID,
-          event.messageID,
-        );
-      }
+    if (event.senderID !== Reply.author) return;
+
+    const reply = parseInt(event.body);
+    if (isNaN(reply)) {
+      return api.sendMessage(
+        "❌ ভুল ইনপুট! অনুগ্রহ করে ১ থেকে ১০ (বা ১১ থেকে ১৯) এর মধ্যে একটি নম্বর দিন।",
+        event.threadID,
+        event.messageID
+      );
     }
+
+    let selectedOption;
+    if (Reply.type === "page1" && reply >= 1 && reply <= 10) {
+      selectedOption = Reply.options[reply - 1];
+    } else if (Reply.type === "page2" && reply >= 11 && reply <= 19) {
+      selectedOption = Reply.options[reply - 11];
+    } else {
+      return api.sendMessage(
+        "❌ Invalid selection number.",
+        event.threadID,
+        event.messageID
+      );
+    }
+
+    const categoryKey = selectedOption
+      .toLowerCase()
+      .replace(/[^\w]/g, "")
+      .replace("video", "")
+      .trim();
+
+    // Trigger album command again with selected category
+    return this.onStart({
+      api,
+      event,
+      args: [categoryKey],
+    });
   },
 };
