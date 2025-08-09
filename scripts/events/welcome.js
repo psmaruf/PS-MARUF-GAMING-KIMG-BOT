@@ -2,7 +2,7 @@ const { getTime, drive } = global.utils;
 
 if (!global.temp.welcomeEvent) global.temp.welcomeEvent = {};
 
-// 14 Welcome Video IDs
+// Updated Welcome Video IDs (with all your added videos)
 const welcomeVideos = [
   "1-RV0_mJS0vAZpvO6IDK3f5eJuLIE3jhm",
   "112ZN4pmSeC-HQwi-mG1jrI9qSLKufx7-",
@@ -17,7 +17,23 @@ const welcomeVideos = [
   "17MiM6FTnnDuNAGJFRQOobEkZvQ_p7VRI",
   "17JmAJ9qe6yIMDVFII_wc2soOaSmrQwFG",
   "17FglmV8XgzNCXFmhoOwAGamYGUQdt3yL",
-  "177hZ758fhPfSmTMTXs4MFX2tMsyk_q__"
+  "177hZ758fhPfSmTMTXs4MFX2tMsyk_q__",
+  "1BvPPk93lUXmRuzmzVbVl9bHq53z9pZsR",
+  "1CU-Tz8Z9sDteRGe8eqbXO-wstgIM-d_c",
+  "1CSuDunNo0R66pq1WUO-WKVMSrKNIob4u",
+  "1CRVzAtF4tWhjYtdEP70fNeH38gk5h_Vw",
+  "1CRQjHi9QMX8WR5_FpNAEfgwO5exJBkqT",
+  "1CP32jAPKU835YCx5DGzEDEKD1WTBu9l-",
+  "1CJLLLiY3POnt41gvyjlvk1WR29JHOqDl",
+  "1CIe9iD1G-8itkpXxNLoGoezr53v7rISu",
+  "1CGFCoctb1U7jkKwg-52KRXnFx1QN3in3",
+  "1CG8K3QuxQOk86_y4DDZSs-kzfpGoo3bz",
+  "1CF7BUw95eyu2_FbgIizY15IINDH_s4Cg",
+  "1C3Lp7yvutWG25tY_iAg2xEFKD-oApNfe",
+  "1C2AbOT_C_YmyXoivrU5msuU0NhW34ySF",
+  "1C1zuNkLSkbrV0dsrLOMozJByzn2Fi19t",
+  "1CaLEhxjy-Uv_2BPUT6nEEw-Vym_lRbQD",
+  "1CVIxTGEfGBi78uZu72j7PFybms0sFW7d"
 ];
 
 module.exports = {
