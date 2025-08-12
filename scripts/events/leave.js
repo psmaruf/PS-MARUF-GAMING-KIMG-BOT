@@ -1,4 +1,4 @@
-const { getTime, drive } = global.utils;
+const { drive } = global.utils;
 
 module.exports = {
   config: {
@@ -24,7 +24,7 @@ module.exports = {
 ┃ 👤 𝗡𝗮𝗺𝗲 : {userNameTag}
 ┃ 📤 𝗦𝘁𝗮𝘁𝘂𝘀 : {type} the group
 ┃ 💬 𝗚𝗿𝗼𝘂𝗽 : {threadName}
-┃ 🕒 𝗟𝗲𝗳𝘁 𝗮𝘁 : {time}h - {session} (BST +6)
+┃ 🕒 𝗟𝗲𝗳𝘁 𝗮𝘁 : {time}
 ╰━━━━━━━━━━━━━━━━━━╯`
     }
   },
@@ -39,33 +39,44 @@ module.exports = {
     const { leftParticipantFbId } = event.logMessageData;
     if (leftParticipantFbId === api.getCurrentUserID()) return;
 
-    const utcHours = parseInt(getTime("HH"));
-    const banglaHours = (utcHours + 6) % 24; // BST UTC+6
-
     const threadName = threadData.threadName || "this group";
     const userName = await usersData.getName(leftParticipantFbId) || "Unknown User";
 
-    let leaveMessage = threadData.data.leaveMessage || getLang("defaultLeaveMessage");
+    // Get Dhaka local time in 12-hour format with seconds
+    const bangladeshTime12h = new Date().toLocaleString("en-US", {
+      timeZone: "Asia/Dhaka",
+      hour12: true,
+      hour: "numeric",
+      minute: "2-digit",
+      second: "2-digit"
+    });
+
+    // Get Dhaka hour in 24-hour format for session logic
+    const dhakaHour = parseInt(new Date().toLocaleString("en-US", {
+      timeZone: "Asia/Dhaka",
+      hour12: false,
+      hour: "2-digit"
+    }));
 
     const session =
-      banglaHours <= 10 ? getLang("session1") :
-      banglaHours <= 12 ? getLang("session2") :
-      banglaHours <= 18 ? getLang("session3") :
-      banglaHours <= 19 ? getLang("session4") :
+      dhakaHour >= 0 && dhakaHour <= 10 ? getLang("session1") :
+      dhakaHour >= 11 && dhakaHour <= 12 ? getLang("session2") :
+      dhakaHour >= 13 && dhakaHour <= 18 ? getLang("session3") :
+      dhakaHour === 19 ? getLang("session4") :
       getLang("session5");
 
-    // Prepare form with placeholders replaced
+    let leaveMessage = threadData.data.leaveMessage || getLang("defaultLeaveMessage");
+
     const form = {
       body: leaveMessage
         .replace(/\{userNameTag\}/g, `@${userName}`)
         .replace(/\{userName\}/g, userName)
         .replace(/\{type\}/g, leftParticipantFbId === event.author ? getLang("leaveType1") : getLang("leaveType2"))
         .replace(/\{threadName\}|\{boxName\}/g, threadName)
-        .replace(/\{time\}/g, banglaHours)
+        .replace(/\{time\}/g, `${bangladeshTime12h} (Dhaka Time) 🌇 ${session}`)
         .replace(/\{session\}/g, session)
     };
 
-    // Add mention if {userNameTag} was used
     if (leaveMessage.includes("{userNameTag}")) {
       form.mentions = [{
         id: leftParticipantFbId,
@@ -73,7 +84,6 @@ module.exports = {
       }];
     }
 
-    // List of leave video file IDs
     const leaveVideos = [
       "17tGvbWdcxgUKAWDN0Zk151XL3XmI3i-k",
       "18STu2xcXSi-SP8utpDdSpOyA7EJEYcU9",
