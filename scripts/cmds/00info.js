@@ -1,12 +1,43 @@
 const axios = require("axios");
 const fs = require("fs-extra");
 const path = require("path");
+const moment = require("moment-timezone");
+
+// Function to apply deep-style Unicode transform
+function toDeepStyle(text) {
+  // Map normal characters to Mathematical Bold Italic Unicode (U+1D468 etc)
+  // For simplicity, this function will only transform letters and digits to bold italic
+  const boldItalicOffsetUpper = 0x1d468 - 65; // 'A' charCode = 65
+  const boldItalicOffsetLower = 0x1d482 - 97; // 'a' charCode = 97
+  const boldItalicDigits = [
+    "𝟬", "𝟭", "𝟮", "𝟯", "𝟰",
+    "𝟱", "𝟲", "𝟳", "𝟴", "𝟵"
+  ];
+
+  let result = "";
+
+  for (const ch of text) {
+    const code = ch.charCodeAt(0);
+
+    if (code >= 65 && code <= 90) { // A-Z
+      result += String.fromCodePoint(code + boldItalicOffsetUpper);
+    } else if (code >= 97 && code <= 122) { // a-z
+      result += String.fromCodePoint(code + boldItalicOffsetLower);
+    } else if (code >= 48 && code <= 57) { // 0-9
+      result += boldItalicDigits[code - 48];
+    } else {
+      result += ch; // keep other chars unchanged
+    }
+  }
+
+  return result;
+}
 
 module.exports = {
   config: {
     name: "info",
     aliases: ["inf", "in", "Rahad", "owner"],
-    version: "1.1",
+    version: "1.3",
     author: "Rahad",
     role: 0,
     shortDescription: { en: "Show bot & group info" },
@@ -16,61 +47,84 @@ module.exports = {
   },
 
   onStart: async function ({ api, event, threadsData }) {
-    const time = require("moment-timezone").tz("Asia/Dhaka").format("DD/MM/YYYY, hh:mm:ss A");
-    const uptime = process.uptime();
-    const hours = Math.floor(uptime / 3600);
-    const minutes = Math.floor((uptime % 3600) / 60);
-    const seconds = Math.floor(uptime % 60);
-    const uptimeStr = `${hours}h ${minutes}m ${seconds}s`;
-
-    const threadInfo = await threadsData.get(event.threadID);
-    const allUsers = threadInfo.members || [];
-    const admins = allUsers.filter(u => u.admin);
-    const male = allUsers.filter(u => u.gender === "MALE").length;
-    const female = allUsers.filter(u => u.gender === "FEMALE").length;
-    const totalMsg = threadInfo.totalMsg || 0;
-
-    const body = `
-┌────────[ 🤖 𝗥𝗔𝗛𝗔𝗗_𝗕𝗢𝗧 ]────────┐
-│ 👑 𝗢𝘄𝗻𝗲𝗿: 𝗥𝗮𝗵𝗮𝗱
-│ 🛠 𝗠𝗼𝗱𝘀: 𝗥𝗮𝗵𝗮𝗱 
-│ 🌍 𝗟𝗼𝗰𝗮𝘁𝗶𝗼𝗻: Asia/Dhaka
-│ 🔋 𝗦𝘁𝗮𝘁𝘂𝘀: ⚡ Online
-├────────[ ⏱️ 𝗦𝗬𝗦𝗧𝗘𝗠 ]────────┤
-│ 🕒 𝗧𝗶𝗺𝗲: ${time}
-│ ♻️ 𝗨𝗽𝘁𝗶𝗺𝗲: ${uptimeStr}
-│ ⚡ 𝗣𝗶𝗻𝗴: ${Date.now() - event.timestamp}ms
-├───────[ 💬 𝗚𝗥𝗢𝗨𝗣 ]────────┤
-│ 💬 𝗡𝗮𝗺𝗲: ${threadInfo.threadName}
-│ 🆔 𝗜𝗗: ${event.threadID}
-│ 👥 𝗠𝗲𝗺𝗯𝗲𝗿𝘀: ${allUsers.length} (♂ ${male} / ♀ ${female})
-│ 🛡 𝗔𝗱𝗺𝗶𝗻𝘀: ${admins.length}
-│ 💌 𝗠𝗲𝘀𝘀𝗮𝗴𝗲𝘀: ${totalMsg}
-└────────────────────────────┘
-    `.trim();
-
-    const videoUrl = "https://drive.google.com/uc?export=download&id=16Xu5T2RpboZs4Nv-F0T_tIWlqjv074Vd";
-    const videoPath = path.join(__dirname, "rahad_info_video.mp4");
-
     try {
-      const res = await axios.get(videoUrl, { responseType: "stream" });
+      const time = moment().tz("Asia/Dhaka").format("DD/MM/YYYY, hh:mm:ss A");
+
+      const uptimeSeconds = process.uptime();
+      const hours = Math.floor(uptimeSeconds / 3600);
+      const minutes = Math.floor((uptimeSeconds % 3600) / 60);
+      const seconds = Math.floor(uptimeSeconds % 60);
+      const uptimeStr = `${hours}h ${minutes}m ${seconds}s`;
+
+      const threadInfo = await threadsData.get(event.threadID);
+      if (!threadInfo) return api.sendMessage("❌ Could not fetch thread info.", event.threadID);
+
+      const members = threadInfo.members || [];
+
+      const admins = members.filter(m => m.isAdmin || m.admin || m.role === "admin");
+      const maleCount = members.filter(m => m.gender && m.gender.toLowerCase() === "male").length;
+      const femaleCount = members.filter(m => m.gender && m.gender.toLowerCase() === "female").length;
+      const totalMessages = threadInfo.totalMsg || 0;
+
+      const ping = Date.now() - event.timestamp;
+
+      // Compose message in normal text first
+      const plainMsg = `
+╔═━─━─━─━─━─━─━─━─━─━═╗
+      ⚜️ RAHAD BOT ⚜️
+╚═━─━─━─━─━─━─━─━─━─━═╝
+
+👑 Owner  : Rahad
+🛠 Mods   : Rahad
+🌍 Location: Asia/Dhaka
+🔋 Status : ⚡ Online
+
+╭─━─━─━─━─━─━─━─━─━─━─╮
+│ ⏰ Time    : ${time}
+│ ⏳ Uptime  : ${uptimeStr}
+│ ⚡ Ping    : ${ping}ms
+╰─━─━─━─━─━─━─━─━─━─━─╯
+
+╔─━─━─━─━─━─━─━─━─━─━─╗
+      💬 GROUP INFO 💬
+╚─━─━─━─━─━─━─━─━─━─━─╝
+
+👥 Name     : ${threadInfo.threadName}
+🆔 ID       : ${event.threadID}
+👤 Members  : ${members.length} (♂ ${maleCount} / ♀ ${femaleCount})
+🛡 Admins   : ${admins.length}
+💬 Messages : ${totalMessages}
+      `.trim();
+
+      // Apply deep style unicode transform
+      const body = toDeepStyle(plainMsg);
+
+      // Video URL and path
+      const videoUrl = "https://drive.google.com/uc?export=download&id=16Xu5T2RpboZs4Nv-F0T_tIWlqjv074Vd";
+      const videoPath = path.join(__dirname, "rahad_info_video.mp4");
+
+      // Download video
+      const response = await axios.get(videoUrl, { responseType: "stream" });
       const writer = fs.createWriteStream(videoPath);
-      res.data.pipe(writer);
+      response.data.pipe(writer);
 
-      writer.on("finish", () => {
-        api.sendMessage({
-          body,
-          attachment: fs.createReadStream(videoPath)
-        }, event.threadID, () => fs.unlinkSync(videoPath));
+      await new Promise((resolve, reject) => {
+        writer.on("finish", resolve);
+        writer.on("error", reject);
       });
 
-      writer.on("error", err => {
-        console.error("Video download failed:", err);
-        api.sendMessage(body, event.threadID);
-      });
+      // Send message with video
+      await api.sendMessage(
+        { body, attachment: fs.createReadStream(videoPath) },
+        event.threadID
+      );
+
+      // Delete video
+      fs.unlinkSync(videoPath);
+
     } catch (err) {
-      console.error("Error fetching video:", err);
-      return api.sendMessage(body, event.threadID);
+      console.error("Error in info command:", err);
+      api.sendMessage("❌ Failed to fetch info or video.", event.threadID);
     }
   }
 };
