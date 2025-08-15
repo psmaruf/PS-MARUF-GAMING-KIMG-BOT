@@ -3,29 +3,29 @@ const { drive } = global.utils;
 module.exports = {
   config: {
     name: "leave",
-    version: "1.6",
-    author: "Rahad",
+    version: "1.7",
+    author: "Rahad Boss",
     category: "events"
   },
 
   langs: {
     en: {
-      session1: "🌅 𝗠𝗢𝗥𝗡𝗜𝗡𝗚 𝗩𝗜𝗕𝗘𝗦",
-      session2: "🍱 𝙉𝙊𝙊𝙉 𝙎𝙐𝙉𝙉𝙔 𝙏𝙄𝙈𝙀",
-      session3: "🌇 𝘼𝙁𝙏𝙀𝙍𝙉𝙊𝙊𝙉 𝘾𝙃𝙄𝙇𝙇",
-      session4: "🌆 𝑬𝒂𝒓𝒍𝒚 𝑬𝒗𝒆𝒏𝒊𝒏𝒈",
-      session5: "🌃 𝕯𝖊𝖊𝖕 𝖓𝖎𝖌𝖍𝖙 𝕾𝖎𝖑𝖊𝖓𝖈𝖊",
+      session1: "🌅 𝗠𝗢𝗥𝗡𝗜𝗡𝗚 𝗩𝗜𝗕𝗘𝗦 ☀️",
+      session2: "🍱 𝙉𝙊𝙊𝙉 𝙎𝙐𝙉𝙉𝙔 𝙏𝙄𝙈𝙀 ☀️",
+      session3: "🌇 𝘼𝙁𝙏𝙀𝙍𝙉𝙊𝙊𝙉 𝘾𝙃𝙄𝙇𝙇 🌞",
+      session4: "🌆 𝑬𝒂𝒓𝒍𝒚 𝑬𝒗𝒆𝒏𝒊𝒏𝒈 🌙",
+      session5: "🌃 𝕯𝖊𝖊𝖕 𝖓𝖎𝖌𝖍𝖙 𝕾𝖎𝖑𝖊𝖓𝖈𝖊 🌌",
       leaveType1: "🚪 𝗟𝗘𝗙𝗧",
       leaveType2: "🛑 𝗪𝗔𝗦 𝗞𝗜𝗖𝗞𝗘𝗗 𝗙𝗥𝗢𝗠",
-      defaultLeaveMessage:
-`╭━━━━━━━━━━━━━━━━━━╮
+      defaultLeaveMessage: `
+╭━━━━━━━━━━━━━━╮
 ┃ 🕹️ 𝗠𝗲𝗺𝗯𝗲𝗿 𝗟𝗲𝗳𝘁 🕹️
-┃──────────────────
+┃────────────────
 ┃ 👤 𝗡𝗮𝗺𝗲 : {userNameTag}
 ┃ 📤 𝗦𝘁𝗮𝘁𝘂𝘀 : {type} the group
 ┃ 💬 𝗚𝗿𝗼𝘂𝗽 : {threadName}
-┃ 🕒 𝗟𝗲𝗳𝘁 𝗮𝘁 : {time}
-╰━━━━━━━━━━━━━━━━━━╯`
+┃ 🕒 𝗧𝗶𝗺𝗲 : {time} ({session})
+╰━━━━━━━━━━━━━━╯`
     }
   },
 
@@ -40,9 +40,12 @@ module.exports = {
     if (leftParticipantFbId === api.getCurrentUserID()) return;
 
     const threadName = threadData.threadName || "this group";
-    const userName = await usersData.getName(leftParticipantFbId) || "Unknown User";
 
-    // Get Dhaka local time in 12-hour format with seconds
+    // ✅ Get user name or fallback to last 5 digits of ID
+    let userName = await usersData.getName(leftParticipantFbId);
+    if (!userName) userName = `User-${leftParticipantFbId.slice(-5)}`;
+
+    // Dhaka time 12h
     const bangladeshTime12h = new Date().toLocaleString("en-US", {
       timeZone: "Asia/Dhaka",
       hour12: true,
@@ -51,7 +54,6 @@ module.exports = {
       second: "2-digit"
     });
 
-    // Get Dhaka hour in 24-hour format for session logic
     const dhakaHour = parseInt(new Date().toLocaleString("en-US", {
       timeZone: "Asia/Dhaka",
       hour12: false,
@@ -73,7 +75,7 @@ module.exports = {
         .replace(/\{userName\}/g, userName)
         .replace(/\{type\}/g, leftParticipantFbId === event.author ? getLang("leaveType1") : getLang("leaveType2"))
         .replace(/\{threadName\}|\{boxName\}/g, threadName)
-        .replace(/\{time\}/g, `${bangladeshTime12h} (Dhaka Time) 🌇 ${session}`)
+        .replace(/\{time\}/g, bangladeshTime12h)
         .replace(/\{session\}/g, session)
     };
 
@@ -84,6 +86,7 @@ module.exports = {
       }];
     }
 
+    // Full leave videos array
     const leaveVideos = [
       "17tGvbWdcxgUKAWDN0Zk151XL3XmI3i-k",
       "18STu2xcXSi-SP8utpDdSpOyA7EJEYcU9",
