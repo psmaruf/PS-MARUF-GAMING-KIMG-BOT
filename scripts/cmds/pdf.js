@@ -17,17 +17,17 @@ module.exports = {
     if (!args[0]) return message.reply("📄 Please type some text to make a PDF!");
 
     const text = args.join(" ");
-    const filePath = path.join(__dirname, "output.pdf");
-    const doc = new PDFDocument();
+    const filePath = path.join(__dirname, `output-${Date.now()}.pdf`);
+    const doc = new PDFDocument({ margin: 50 });
     const stream = fs.createWriteStream(filePath);
     doc.pipe(stream);
 
     // Stylish Title
-    doc.fontSize(20).fillColor("#FF1493").text("💖 Bby - PDF Creator 💖", { align: "center" });
+    doc.fontSize(20).fillColor("#FF1493").text("💖 Bby - PDF Creator 💖", { align: "center", underline: true });
     doc.moveDown();
 
     // Main Text
-    doc.fontSize(14).fillColor("#000000").text(text, { align: "left" });
+    doc.fontSize(14).fillColor("#000000").text(text, { align: "left", lineGap: 5 });
     doc.moveDown();
 
     // Footer Signature
@@ -38,7 +38,14 @@ module.exports = {
       message.reply({
         body: "✅ **PDF Created Successfully!**\n━━━━━━━━━━━━━━━━\n📎 Your stylish PDF is ready!\n━━━━━━━━━━━━━━━━\n✨ Rahad Boss ✨",
         attachment: fs.createReadStream(filePath)
+      }).then(() => {
+        fs.unlink(filePath).catch(console.error);
       });
+    });
+
+    stream.on("error", (err) => {
+      console.error("PDF creation error:", err);
+      message.reply("❌ Failed to create PDF. Please try again.");
     });
   }
 };
