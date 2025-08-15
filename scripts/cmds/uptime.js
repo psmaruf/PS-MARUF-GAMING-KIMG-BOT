@@ -2,14 +2,13 @@ const fs = require("fs-extra");
 const axios = require("axios");
 const path = require("path");
 const os = require("os");
-const { GoatWrapper } = require("fca-liane-utils");
 const { config } = global.GoatBot;
 
 module.exports = {
   config: {
     name: "uptime",
     aliases: ["up", "upt", "s"],
-    version: "2.3",
+    version: "2.5",
     author: "Rahad",
     role: 0,
     shortDescription: { en: "Bot status + 1 random video" },
@@ -30,40 +29,39 @@ module.exports = {
       const s = Math.floor(uptime % 60);
       const hhmmss = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
 
-      const memUsed = process.memoryUsage().rss;
-      const memTotal = os.totalmem();
-      const memPercent = ((memUsed/memTotal)*100).toFixed(1);
-      const cpu = (process.cpuUsage().user / 1000).toFixed(1);
-      const ping = Math.floor(Math.random()*20)+20;
+      const memUsedMB = (process.memoryUsage().rss / 1024 / 1024).toFixed(1);
+      const memPercent = ((process.memoryUsage().rss / os.totalmem()) * 100).toFixed(1);
+      const cpuUsageMS = (process.cpuUsage().user / 1000).toFixed(1);
+      const ping = Math.floor(Math.random() * 20) + 20;
 
       const osType = os.type();
       const osArch = os.arch();
       const osPlat = os.platform();
-      const host = os.hostname();
       const cpuInfo = os.cpus()[0].model.split(" @")[0];
       const nodeVer = process.version;
       const cores = os.cpus().length;
-      const sysUptime = Math.floor(os.uptime() / 60);
-      const active = allThreads.filter(t => t.active).length;
+      const sysUptimeMin = Math.floor(os.uptime() / 60);
+      const activeThreads = allThreads.filter(t => t.active).length;
       const ratio = (allUsers.length / allThreads.length).toFixed(2);
-      const noPrefix = !!config.commandOptions?.applyNoPrefix;
 
-      const msg =
-`╭─[ ⚡ BOT STATUS ]─╮
-│ ✅ Online │ PID: ${process.pid}
-│ ⏱️ Uptime: ${d}d ${h}h ${m}m ${s}s (⏰ ${hhmmss})
-│ 👤 Users : ${allUsers.length}
-│ 💬 Threads : ${allThreads.length} (Active: ${active})
-│ ⚖️ Ratio : ${ratio}
-│ 📡 Ping : ${ping} ms
-│ 🧠 RAM : ${(memUsed/1024/1024).toFixed(1)} MB (${memPercent}%)
-│ ⚙️ CPU : ${cpu} ms
-│ 🧬 Node : ${nodeVer}
-│ 🖥️ OS : ${osType} (${osPlat}) / ${osArch}
-│ 🧠 CPU Info : ${cpuInfo}
-│ ⌚ OS Uptime: ${sysUptime} min
-╰─[ —(••÷ 𝘽𝙮 𝙍𝘼𝙃𝘼𝘿  ÷••)— ]─╯`;
+      // ==== Stylized message ====
+      const msg = 
+`╔═════════🌟 𝗕𝗢𝗧 𝗨𝗣𝗧𝗜𝗠𝗘 🌟═════════╗
+│ ✅ Status : ONLINE
+│ ⏱️ Uptime : ${d}d ${h}h ${m}m ${s}s (⏰ ${hhmmss})
+│ 👤 Users  : ${allUsers.length}
+│ 💬 Threads : ${allThreads.length} (Active: ${activeThreads})
+│ ⚖️ Ratio  : ${ratio}
+│ 📡 Ping   : ${ping} ms
+│ 🧠 RAM    : ${memUsedMB} MB (${memPercent}%)
+│ ⚙️ CPU    : ${cpuUsageMS} ms
+│ 🧬 Node   : ${nodeVer}
+│ 🖥️ OS     : ${osType} (${osPlat}) / ${osArch}
+│ 🧠 CPU Info: ${cpuInfo}
+│ ⌚ OS Uptime: ${sysUptimeMin} min
+╚═══════💖 𝗕𝒚 𝗥𝗔𝗛𝗔𝗗 💖═══════╝`;
 
+      // ==== Video selection ====
       const videoIDs = [
         "1-BPrxFpmwuoG1V3WkivuR4j-EaTqwtHl",
         "10Jb5FGt600rNrJgr-XeTfZsCSjknJep1",
@@ -93,7 +91,7 @@ module.exports = {
         }, event.threadID, () => fs.unlinkSync(videoPath));
       } catch (videoErr) {
         console.error("🚫 Video download failed:", videoErr.message);
-        await api.sendMessage(`${msg}\n⚠️ But video failed to load.`, event.threadID);
+        await api.sendMessage(`${msg}\n⚠️ Video failed to load.`, event.threadID);
       }
 
     } catch (err) {
@@ -102,6 +100,3 @@ module.exports = {
     }
   }
 };
-
-const wrapper = new GoatWrapper(module.exports);
-wrapper.applyNoPrefix({ allowPrefix: true });
