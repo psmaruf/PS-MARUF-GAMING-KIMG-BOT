@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP পাঠানো</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <div class="form-container">
+        <h2 class="header">OTP পাঠান</h2>
+        <form id="otpForm">
+            <input type="text" id="mobile" placeholder="মোবাইল নাম্বার" maxlength="11">
+            <input type="number" id="amount" placeholder="পরিমাণ">
+            <button id="send" class="btn-outline-primary">Send</button>
+        </form>
+        <div id="logs" class="status"></div>
+        <p class="notice">সঠিক নাম্বার এবং পরিমাণ লিখুন</p>
+        <p class="credit">Author: Shayer Mahmud Sowmik</p>
+    </div>
+</body>
+</html>
