@@ -1,0 +1,57 @@
+body {
+	background: #11111b;
+	padding-top: 10vh;
+	font-family: Arial, sans-serif;
+}
+
+.form-container {
+	background: #8901cc;
+	border-radius: 10px;
+	padding: 30px;
+	width: 300px;
+	margin: auto;
+}
+
+.header {
+	text-align: center;
+	color: #fff;
+	margin-bottom: 20px;
+}
+
+#otpForm input {
+	width: 100%;
+	padding: 10px;
+	margin: 5px 0;
+	border: none;
+	border-radius: 5px;
+}
+
+#send {
+	width: 100%;
+	padding: 10px;
+	margin-top: 10px;
+	border: 2px solid #fff;
+	border-radius: 5px;
+	background: transparent;
+	color: #fff;
+	cursor: pointer;
+}
+
+.status {
+	display: none;
+	text-align: center;
+	margin-top: 15px;
+	color: #fff;
+}
+
+.notice {
+	font-size: 12px;
+	color: red !important;
+	text-align: center;
+}
+
+.credit {
+	text-align: center;
+	color: whitesmoke;
+	margin-top: 20px;
+}
