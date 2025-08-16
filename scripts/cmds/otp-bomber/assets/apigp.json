@@ -1,0 +1,16 @@
+{
+    "apis": [
+        {
+            "method": "POST",
+            "url": "http://www.cinespot.mobi/api/cinespot/v1/otp/sms/mobile-*****",
+            "headers": {},
+            "body": ""
+        },
+        {
+            "method": "POST",
+            "url": "http://robi.api.bongobd.com/api/login/send-otp",
+            "headers": { "Content-Type": "application/x-www-form-urlencoded" },
+            "body": "msisdn=88*****&operator=all"
+        }
+    ]
+}
