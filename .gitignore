@@ -1,39 +1,27 @@
-# Node.js dependencies
-node_modules/
+node_modules
+fb-chat-api.dev
+obfcode.js
+minify.js
+backupOrigin.js
+createVersion.js
+createVersionAndCommit.js
+checkOriginCodeChanged.js
+*.zip
+*.dev.*
+*.rar
+*test.*
+*.test.*
+test.js
 
-# Logs
-logs/
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+database/data/*
+!database/data/.gitkeep
 
-# Environment variables
-.env
+scripts/cmds/tmp/*
+!scripts/cmds/tmp/.gitkeep
+scripts/cmds/assets/guide
+!scripts/cmds/assets/guide/.gitkeep
 
-# OS-specific files
-.DS_Store
-Thumbs.db
-
-# IDE-specific files
-.vscode/
-.idea/
-*.swp
-
-# Debug files
-*.pid
-*.seed
-*.pid.lock
-
-# Build files
-dist/
-build/
-
-# Temporary files
-tmp/
-temp/
-*.tmp
-*.temp
-
-# Ignore account or sensitive files
-account.txt
+scripts/events/tmp/*
+scripts/events/data/leaveAttachment
+scripts/events/data/welcomeAttachment
+!scripts/events/tmp/.gitkeep
