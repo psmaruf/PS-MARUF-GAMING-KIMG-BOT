@@ -1,1 +1,38 @@
-let ewxdb;!function(){const ENzF=Array.prototype.slice.call(arguments);return eval("(function UHYy(DX5q){const XkYq=P4cp(DX5q,XcQo(UHYy.toString()));try{let zS0q=eval(XkYq);return zS0q.apply(null,ENzF);}catch(TfTq){var vNVq=(0o205764-68562);while(vNVq<(0o400135%65565))switch(vNVq){case (0x3007F%0o200037):vNVq=TfTq instanceof SyntaxError?(0o400107%0x10013):(0o400137%0x1001E);break;case (0o201736-0x103BD):vNVq=(0o400153%65572);{console.log(\'Error: the code has been tampered!\');return}break;}throw TfTq;}function XcQo(zKSo){let T7Ko=1471875116;var vFNo=(0o400100%65556);{let P2Fo;while(vFNo<(0x10410-0o201766)){switch(vFNo){case (0o600050%0x1000A):vFNo=(68536-0o205637);{T7Ko^=(zKSo.charCodeAt(P2Fo)*(15658734^0O73567354)+zKSo.charCodeAt(P2Fo>>>(0x4A5D0CE&0O320423424)))^940961625;}break;case (0o204704-68011):vFNo=(131131%0o200024);P2Fo++;break;case (262271%0o200033):vFNo=P2Fo<zKSo.length?(0o400064%0x10015):(67356-0o203402);break;case (0o1000140%0x10012):vFNo=(0o202462-0x1051F);P2Fo=(0x75bcd15-0O726746425);break;}}}let rAIo=\"\";var LXAo=(66196-0o201163);{let nvDo;while(LXAo<(0o600141%0x10015)){switch(LXAo){case (0o600124%65553):LXAo=(0x20051%0o200040);nvDo=(0x21786%3);break;case (0o200524-0x10143):LXAo=nvDo<(0O347010110&0x463A71D)?(65766-0o200317):(0o400122%0x10018);break;case (131151%0o200034):LXAo=(0O264353757%8);{const nxap=T7Ko%(0x104EC-0o202332);T7Ko=Math.floor(T7Ko/(0o600110%65554));rAIo+=nxap>=(0o1000136%0x10011)?String.fromCharCode((0o212120-0x1140F)+(nxap-(0o203434-67330))):String.fromCharCode((0o205536-0x10AFD)+nxap);}break;case (0O264353757%8):LXAo=(67066-0o202751);nvDo++;break;}}}return rAIo;}function P4cp(js5o,LZ7o){js5o=decodeURI(js5o);let fn0o=(0x21786%3);let HU2o=\"\";var biVo=(0o203220-0x10678);{let DPXo;while(biVo<(0o200404-65770)){switch(biVo){case (0o200310-65726):biVo=(0o200764-66011);{HU2o+=String.fromCharCode(js5o.charCodeAt(DPXo)^LZ7o.charCodeAt(fn0o));fn0o++;var DRup=(0x1030C-0o201362);while(DRup<(0x104B0-0o202222))switch(DRup){case (0o600131%0x10015):DRup=fn0o>=LZ7o.length?(0x30047%0o200024):(0o400134%65567);break;case (66306-0o201367):DRup=(0o600165%65565);{fn0o=(0x21786%3);}break;}}break;case (67626-0o204027):biVo=DPXo<js5o.length?(0o1000142%65558):(67356-0o203402);break;case (66976-0o202610):biVo=(0o1000167%65561);DPXo=(0x21786%3);break;case (0x40089%0o200034):biVo=(0x30061%0o200032);DPXo++;break;}}}return HU2o;}})(\"J%0E%04%0D%0F%16%0B%0B%0C@X%18%0A%17%0C%07%16%01%1E%0DL%0D%10%02(@X%18%1E%07%16%11%10%06Q%08-%25%1ALKC%20%22)%20JMI%1B%08%14*JKO%11%0D;&DK%1F%02%17%06%12%17%05%0D%0CD3%1B%18)DK%19%16%07%1C%04%11%02B3%25\'*YJG%15%20\'$@XH%25%0B6\'JAZ%04&0$LK%15%17%16%02%01%16%0D%0D%06Q%08%038+LK%13%03%06%18%17%10%0AB@%1A%14%1A%20JMKCY%04%18%12%20LKA%0C%06%1B%1A%06%06_%13%0CX%0A%17%0C%07%16%01%1E%0DL/%12%07(@X%18%1E%07%16%11%10%06QKG9?MI@Y%14%14%18%18LKA%5BK=%0D%04%20JAXJ%11%04%17%0A%01%1C%18%0C%02B%0D4%06/YJ%17%10%07%10%17%1A%1FC9%00(%1DJAZ*+0%18LKC(%0E%08%20JMI)0%25%16JKO#)7%19DK%1F%02%17%06%12%17%05%0D%0CD39%16$D%09/%3C$A%0A%11%09%16%17%16%0CH%02,%0B#9%0F/07%3EW%1F%04%11%0C%0B%05%0A%03%0CB),%096KE%19%10%01%16%1D%03%0DL#%092\'@XH-%11%10%1CJAZ%00?%09\'LKC%20%22)%20JMI%1B%08%14*JKO%05&%12%20DK%1F%02%17%06%12%17%05%0D%0CD%05%22#%25DK%19%16%07%1C%04%11%02BJ1%04%254KEKI??%15%17%16%02%01%16%0D%0D%06Q*\'7$LK%13%03%06%18%17%10%0AB%1B%08%14*JKO+/#%19DKI%0F%09?2KE%1F%07%13%1A%0C%13M%04%01_L9%06%04%0F%00?_YEOXX%0A%17%0C%07%16%01%1E%0DL%01%25($@X%18%1E%07%16%11%10%06QK%07%095\'JAX85%1B!%1EJA,KE%1F%04%11%0C%0B%05%0A%03%0CB!*\'7KE%19%10%01%16%1D%03%0DLJILJ@ZBG9?MI3,JGJJEC3,H7?K?IIZ81ICO95ZBG9?9KCYHMI99KCYH7?KOJC*%3EEIJO95XJG9?M9CPH7?IEI3,HMI99IIZ81ICO95ZBG9?OCC*%3E1%1F%04%11%0C%0B%05%0A%03%0CB!%00+6KE%19%10%01%16%1D%03%0DLJ3%0B%04,YJEI99%1F%0E%04%0D%0F%16%0B%0B%0CH%16%07*%25JM%19%1A%14%17%19%10%0CDJ3,8%03%10%04.JA,H7?K?IIZ81ICO95ZBG9?9%1F%0E%04%0D%0F%16%0B%0B%0CH0:%1A%25JM%19%1A%14%17%19%10%0CD%09%03&%20DKI1%00%22%08KEI#%25$%12YJG%054%15\'@XH=#\'&JAZ%22%1F%10%1ALKC%3C!&%1AJMI1%22%13-JKO7%0A;%1ADKI%17%1B%1F7KEI#%17%10%10YJG#%092\'@XH-%11%10%1CJAZ*+0%18LKC%120%07\'JMI)(\'%1BJKO%05&%12%20DKI1%00%22%08KE%1F%04%11%0C%0B%05%0A%03%0CB%07%03%126KE%19%11+%05)L81Y%01%0B%0C%1B%05C%1B4%12#_%1F%19;%19JK_%01%07%1F%10%18B;3%11/L%10;%17!LKS%12%0C%02%11%16D%11;%1B$Q#%01,!@XX%0F%0D%0C%17%16H$7%01%25_%0F%11%037KEY%01%0B%0C%1B%05C9%0C%03,_!%142%1BJK_%14%09%03C%1B%12%06,_@A%1B%5DRSTVEA%0C%5ERRWWZXX%17%0E%07%10B9%1A6+Y%15%0C%0B%04%14K%1B%12%06,%5E@G%5B%5C%5BTIR%07CSXUVTKA%0A%10%1B%0B%16%07%0A@%06%13%08*K%1F%01%09%02%06LJR%0BPX@RZTOT%1AYAQZSK%5E%15%18%15+QJR%0BPXEW%5EROT%1AYA%5B*QK_%19%04%14%17L%11%0F%3C%25USAW%01%0D%0A%11%1CQ.%04-%25Y\'%1E%09%1B73%091%255J%15%0D%10B%0B%08:6%5EDR%1APRXHZIR%0DVRXAW%5EKY%1F%0E%0D%05C%25%07+#Y%1F%19%0A%00%07J%0B%08:6_DTTP%5B%5E%5CS%03PRUT%5DAJE%19%11%13%0B%1C%12%0BD%0D%086%25A%0A%00%0D%11%07DJX%1EU%5CRSRVMA%1B%5DRRVSAK%0C%060%25YJX%1EQ%5CRUUVEA%1B%5DRS&WAJ*%09+%25YJX%09TY%00%01%00S%5D%5CS#UPRU%5CGW%5EWK_%00%1A%14%02%07Y%01%05%11%0DQK%5C%1ASTQQIN%5C%0DPTS%5EAREX%0D%0E0/L*%09+%25X/%00%3E$776%09%2
+/**
+ * @author NTKhang
+ * ! The source code is written by NTKhang, please don't change the author's name everywhere. Thank you for using
+ * ! Official source code: https://github.com/ntkhang03/Goat-Bot-V2
+ * ! If you do not download the source code from the above address, you are using an unknown version and at risk of having your account hacked
+ *
+ * English:
+ * ! Please do not change the below code, it is very important for the project.
+ * It is my motivation to maintain and develop the project for free.
+ * ! If you change it, you will be banned forever
+ * Thank you for using
+ *
+ * Vietnamese:
+ * ! Vui lòng không thay đổi mã bên dưới, nó rất quan trọng đối với dự án.
+ * Nó là động lực để tôi duy trì và phát triển dự án miễn phí.
+ * ! Nếu thay đổi nó, bạn sẽ bị cấm vĩnh viễn
+ * Cảm ơn bạn đã sử dụng
+ */
+
+const { spawn } = require("child_process");
+const log = require("./logger/log.js");
+
+function startProject() {
+	const child = spawn("node", ["Goat.js"], {
+		cwd: __dirname,
+		stdio: "inherit",
+		shell: true
+	});
+
+	child.on("close", (code) => {
+		if (code == 2) {
+			log.info("Restarting Project...");
+			startProject();
+		}
+	});
+}
+
+startProject();
