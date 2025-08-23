@@ -1,103 +1,89 @@
-const axios = require("axios");
+// bestie.js
 const fs = require("fs-extra");
-const path = require("path");
-const jimp = require("jimp");
-
-const templateURL = "https://i.imgur.com/RloX16v.jpg";
-const templatePath = path.join(__dirname, "cache/canvas/bestu.png");
-
-async function downloadTemplate() {
-  const dir = path.dirname(templatePath);
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-  if (!fs.existsSync(templatePath)) {
-    const res = await axios.get(templateURL, { responseType: "arraybuffer" });
-    fs.writeFileSync(templatePath, res.data);
-  }
-}
-
-async function circle(image) {
-  image = await jimp.read(image);
-  image.circle();
-  return await image.getBufferAsync("image/png");
-}
-
-async function makeImage({ one, two }) {
-  const root = path.join(__dirname, "cache/canvas");
-  const baseImage = await jimp.read(templatePath);
-
-  const avatarOnePath = path.join(root, `avt_${one}.png`);
-  const avatarTwoPath = path.join(root, `avt_${two}.png`);
-  const outputPath = path.join(root, `bestie_${one}_${two}.png`);
-
-  const getAvatarOne = (await axios.get(`https://graph.facebook.com/${one}/picture?width=512&height=512&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`, { responseType: "arraybuffer" })).data;
-  const getAvatarTwo = (await axios.get(`https://graph.facebook.com/${two}/picture?width=512&height=512&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`, { responseType: "arraybuffer" })).data;
-
-  fs.writeFileSync(avatarOnePath, getAvatarOne);
-  fs.writeFileSync(avatarTwoPath, getAvatarTwo);
-
-  const circleOne = await jimp.read(await circle(avatarOnePath));
-  const circleTwo = await jimp.read(await circle(avatarTwoPath));
-
-  baseImage.composite(circleOne.resize(191, 191), 93, 111);
-  baseImage.composite(circleTwo.resize(190, 190), 434, 107);
-
-  const finalImage = await baseImage.getBufferAsync("image/png");
-  fs.writeFileSync(outputPath, finalImage);
-
-  fs.unlinkSync(avatarOnePath);
-  fs.unlinkSync(avatarTwoPath);
-
-  return outputPath;
-}
+const Canvas = require("canvas");
 
 module.exports = {
   config: {
     name: "bestie",
-    version: "7.3.1",
-    author: "Priyansh Rajput (Goat V2 by ChatGPT)",
+    aliases: ["friend", "buddy"],
+    version: "7.3.8",
+    author: "Rahad",
     countDown: 5,
     role: 0,
-    shortDescription: "Make bestie pair from mention",
-    longDescription: "Generate a bestie pairing image using two profile pictures",
-    category: "fun",
-    guide: {
-      en: "{pn} @mention"
-    }
+    shortDescription: "Bestie edit with template",
+    longDescription: "Put user profile pictures exactly on placeholders in background",
+    category: "funny",
+    guide: "{pn} @tag"
   },
 
-  onStart: async function () {
-    await downloadTemplate();
-  },
-
-  onRun: async function ({ message, event }) {
-    const { senderID, mentions, threadID, messageID } = event;
-    const mentionIDs = Object.keys(mentions);
-
-    if (mentionIDs.length === 0) {
-      return message.reply("🙃 Tag at least one person to make your bestie!");
-    }
-
-    const one = senderID;
-    const two = mentionIDs[0];
-
+  onStart: async function ({ event, api }) {
     try {
-      const imagePath = await makeImage({ one, two });
-      await message.reply({
-        body:
-          "✧•❁ 𝐅𝐫𝐢𝐞𝐧𝐝𝐬𝐡𝐢𝐩 ❁•✧\n\n" +
-          "╔═══❖••° °••❖═══╗\n" +
-          "   𝐒𝐮𝐜𝐜𝐞𝐬𝐬𝐟𝐮𝐥 𝐏𝐚𝐢𝐫𝐢𝐧𝐠\n" +
-          "╚═══❖••° °••❖═══╝\n\n" +
-          "✶⊶⊷⊷❍⊶⊷⊷✶\n" +
-          "     👑 𝐘𝐞 𝐋𝐞 𝐌𝐢𝐥 𝐆𝐚𝐢 ❤\n" +
-          "𝐓𝐞𝐫𝐢 𝐁𝐞𝐬𝐭𝐢𝐞 🩷\n" +
-          "✶⊶⊷⊷❍⊶⊷⊷✶",
-        attachment: fs.createReadStream(imagePath)
+      const id1 = event.senderID;
+      const mentions = Object.keys(event.mentions || {});
+      const id2 = mentions[0];
+      if (!id2) {
+        return api.sendMessage("❌ | Please mention someone!", event.threadID, event.messageID);
+      }
+
+      // Load avatars
+      const avatar1 = await Canvas.loadImage(
+        `https://graph.facebook.com/${id1}/picture?width=512&height=512&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`
+      );
+      const avatar2 = await Canvas.loadImage(
+        `https://graph.facebook.com/${id2}/picture?width=512&height=512&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`
+      );
+
+      // Load background
+      const background = await Canvas.loadImage("https://i.imgur.com/RloX16v.jpg");
+
+      // Create canvas
+      const canvas = Canvas.createCanvas(background.width, background.height);
+      const ctx = canvas.getContext("2d");
+
+      // Draw background
+      ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
+
+      // === Coordinates (same as jimp version) ===
+      const left = { x: 93, y: 111, size: 191 };
+      const right = { x: 434, y: 107, size: 190 };
+
+      // Draw left avatar
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(left.x + left.size / 2, left.y + left.size / 2, left.size / 2, 0, Math.PI * 2, true);
+      ctx.closePath();
+      ctx.clip();
+      ctx.drawImage(avatar1, left.x, left.y, left.size, left.size);
+      ctx.restore();
+
+      // Draw right avatar
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(right.x + right.size / 2, right.y + right.size / 2, right.size / 2, 0, Math.PI * 2, true);
+      ctx.closePath();
+      ctx.clip();
+      ctx.drawImage(avatar2, right.x, right.y, right.size, right.size);
+      ctx.restore();
+
+      // Save & send
+      const path = __dirname + "/cache/bestie.png";
+      const out = fs.createWriteStream(path);
+      const stream = canvas.createPNGStream();
+      stream.pipe(out);
+      out.on("finish", () => {
+        api.sendMessage(
+          {
+            body: "✧•❁𝐅𝐫𝐢𝐞𝐧𝐝𝐬𝐡𝐢𝐩❁•✧\n\n╔═══❖••° °••❖═══╗\n\n   𝐒𝐮𝐜𝐜𝐞𝐬𝐬𝐟𝐮𝐥 𝐁𝐞𝐬𝐭𝐢𝐞 𝐄𝐝𝐢𝐭\n\n╚═══❖••° °••❖═══╝\n\n   ✶⊶⊷⊷❍⊶⊷⊷✶\n\n    🤏💨 𝐍𝐞 𝐃𝐡𝐨𝐫 𝐓𝐨𝐫 𝐁𝐞𝐬𝐭𝐢𝐞 💞\n\n   ✶⊶⊷⊷❍⊶⊷⊷✶",
+            attachment: fs.createReadStream(path)
+          },
+          event.threadID,
+          () => fs.unlinkSync(path),
+          event.messageID
+        );
       });
-      fs.unlinkSync(imagePath);
     } catch (err) {
-      console.error("❌ Bestie Error:", err);
-      message.reply("❌ ছবি তৈরি করতে সমস্যা হয়েছে। একটু পরে আবার চেষ্টা করুন।");
+      console.error(err);
+      api.sendMessage("❌ | Something went wrong!", event.threadID, event.messageID);
     }
   }
 };
