@@ -3,114 +3,159 @@ const fs = require("fs");
 const path = require("path");
 const https = require("https");
 
-const cacheDir = path.join(__dirname, "cache");
-if (!fs.existsSync(cacheDir)) fs.mkdirSync(cacheDir);
+const downloadDir = path.join(__dirname, "cache");
+if (!fs.existsSync(downloadDir)) fs.mkdirSync(downloadDir);
 
-let spotifyCache = {};
+// ========== Helper: Retry with Backoff ==========
+async function fetchWithRetry(url, retries = 3, delay = 2000) {
+  for (let i = 0; i <= retries; i++) {
+    try {
+      return await axios.get(url, { timeout: 15000 });
+    } catch (err) {
+      if (i === retries) throw err;
+      const wait = err.response?.headers?.["retry-after"] * 1000 || delay;
+      console.log(`Retrying in ${wait / 1000}s...`);
+      await new Promise(r => setTimeout(r, wait));
+    }
+  }
+}
 
 module.exports = {
   config: {
     name: "spotify",
-    aliases: ["spot", "spt"],
-    version: "2.0",
-    author: "mirrykal + ChatGPT + PrinceTech",
+    aliases: [],
+    version: "2.4.0",
+    author: "Rahad Boss",
     countDown: 5,
     role: 0,
-    shortDescription: "Spotify song search",
-    longDescription: "Search songs from Spotify and download as mp3",
+    shortDescription: "Spotify search + download",
+    longDescription: "Search and download Spotify songs using PrinceTech API (stable version)",
     category: "media",
-    guide: {
-      en: "{pn} [song name]\nReply with number (1-7) to download."
-    }
+    guide: "{pn} [song name]"
   },
 
-  onStart: async function ({ message, args, event }) {
-    if (!args[0]) return message.reply("🎧 Please enter a song name!");
+  // ==================== MAIN COMMAND ====================
+  onStart: async function ({ message, event, args }) {
+    if (args.length === 0) {
+      return message.reply("🎧 গান নাম লিখো ভাই!");
+    }
 
     const query = encodeURIComponent(args.join(" "));
-    const url = `https://api.princetechn.com/api/search/spotifysearch?apikey=prince&query=${query}`;
+    const searchUrl = `https://api.princetechn.com/api/search/spotifysearch?apikey=prince&query=${query}`;
 
     try {
-      const res = await axios.get(url);
+      const res = await fetchWithRetry(searchUrl);
       const results = res.data?.results?.slice(0, 7);
 
-      if (!results || results.length === 0)
-        return message.reply("❌ No songs found.");
+      if (!results || results.length === 0) {
+        return message.reply("❌ কোনো গান পাওয়া যায়নি!");
+      }
 
-      let msg = "🎶 𝗦𝗽𝗼𝘁𝗶𝗳𝘆 𝗦𝗲𝗮𝗿𝗰𝗵 𝗥𝗲𝘀𝘂𝗹𝘁𝘀:\n\n";
+      let msg = "━━━━━━━━━━━━━━━━━━\n";
+      msg += "🎵 𝗦𝗽𝗼𝘁𝗶𝗳𝘆 𝗦𝗲𝗮𝗿𝗰𝗵 𝗥𝗲𝘀𝘂𝗹𝘁𝘀\n";
+      msg += "━━━━━━━━━━━━━━━━━━\n\n";
+
       results.forEach((track, i) => {
-        msg += `${i + 1}. ${track.title} - ${track.artist} (${track.duration})\n`;
+        msg += `🔹 ${i + 1}. ${track.title}\n     👤 ${track.artist}\n     ⏱ ${track.duration}\n\n`;
       });
-      msg += "\n🔢 Reply with 1–7 to download the song.";
 
-      // Save cache using messageID
-      spotifyCache[event.messageID] = results;
+      msg += "━━━━━━━━━━━━━━━━━━\n";
+      msg += "👉 Reply with number (1-7) to download.\n";
+      msg += "━━━━━━━━━━━━━━━━━━";
 
-      message.reply(msg, (err, info) => {
-        spotifyCache[info.messageID] = results;
+      return message.reply(msg, (err, info) => {
+        if (err) return;
+        global.GoatBot.onReply.set(info.messageID, {
+          commandName: "spotify",
+          author: event.senderID,
+          results,
+          messageID: info.messageID
+        });
       });
 
     } catch (err) {
-      console.error(err);
-      message.reply("❌ Failed to search song.");
+      console.error("Search Error:", err);
+      return message.reply("❌ Search এ সমস্যা হয়েছে, একটু পরে চেষ্টা করো!");
     }
   },
 
-  onReply: async function ({ message, Reply, event }) {
-    const choice = parseInt(event.body.trim());
-    if (isNaN(choice) || choice < 1 || choice > 7) return;
+  // ==================== REPLY HANDLER ====================
+  onReply: async function ({ event, message, Reply, api }) {
+    const msg = event.body.trim();
+    if (!/^[1-7]$/.test(msg)) return;
+    if (event.senderID !== Reply.author) return;
 
-    const selected = spotifyCache[Reply.messageID]?.[choice - 1];
-    if (!selected) return message.reply("❌ Song not found.");
+    const choice = parseInt(msg);
+    const selectedTrack = Reply.results?.[choice - 1];
+    if (!selectedTrack) return message.reply("❌ Invalid choice!");
 
-    delete spotifyCache[Reply.messageID];
+    // Delete old search message (optional)
+    try {
+      await api.unsendMessage(Reply.messageID);
+    } catch (e) {
+      console.warn("Unsend failed:", e.message);
+    }
 
-    const downloadUrl = `https://api.princetechn.com/api/download/spotifydl?apikey=prince&url=${encodeURIComponent(selected.url)}`;
-    message.reply(`⏬ Downloading "${selected.title}"...`);
+    const downloadApi = `https://api.princetechn.com/api/download/spotifydl?apikey=prince&url=${encodeURIComponent(selectedTrack.url)}`;
+
+    await message.reply(`⏬ Downloading "${selectedTrack.title}"...`);
 
     try {
-      const res = await axios.get(downloadUrl);
+      const res = await fetchWithRetry(downloadApi);
       const data = res.data?.result;
 
-      if (!data || !data.download_url)
-        return message.reply("❌ Download link not available.");
+      if (!data || !data.download_url) {
+        return message.reply("❌ Download link পাওয়া যায়নি!");
+      }
 
-      // Send thumbnail and info
-      const infoMsg = {
-        body: `🎧 𝗧𝗶𝘁𝗹𝗲: ${data.title}\n⏱ 𝗗𝘂𝗿𝗮𝘁𝗶𝗼𝗻: ${data.duration}`,
-        attachment: await global.utils.getStreamFromURL(data.thumbnail)
-      };
-      await message.reply(infoMsg);
+      // Save filename
+      const safeName = data.title.replace(/[^a-zA-Z0-9]/g, "_");
+      const filePath = path.join(downloadDir, `${safeName}.mp3`);
 
-      // Download audio
-      const fileName = `${data.title.replace(/[^a-z0-9]/gi, "_")}.mp3`;
-      const filePath = path.join(cacheDir, fileName);
+      // === Check cache ===
+      if (fs.existsSync(filePath)) {
+        console.log("Cache hit:", filePath);
+        await message.reply({
+          body: `🎵 𝗦𝗽𝗼𝘁𝗶𝗳𝘆\n\n✅ Cached song ready!\n🎧 ${data.title}`,
+          attachment: fs.createReadStream(filePath)
+        });
+        return;
+      }
+
+      // Send thumbnail + info
+      await message.reply({
+        body:
+`🎵 𝗦𝗽𝗼𝘁𝗶𝗳𝘆  
+
+🎧 𝗧𝗶𝘁𝗹𝗲: ${data.title}  
+👤 𝗔𝗿𝘁𝗶𝘀𝘁: ${data.artist || "Unknown"}  
+⏱ 𝗗𝘂𝗿𝗮𝘁𝗶𝗼𝗻: ${data.duration}  
+
+🔥 𝗥𝗮𝗵𝗮𝗱 𝗕𝗼𝘀𝘀`,
+        attachment: await global.utils.getStreamFromURL(data.thumbnail).catch(() => null)
+      });
+
+      // Download file
       const file = fs.createWriteStream(filePath);
-
       await new Promise((resolve, reject) => {
         https.get(data.download_url, (res) => {
           res.pipe(file);
           file.on("finish", () => file.close(resolve));
         }).on("error", (err) => {
-          fs.unlinkSync(filePath);
+          if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
           reject(err);
         });
       });
 
-      // Send file
+      // Send MP3
       await message.reply({
-        body: `✅ Here’s your song: ${data.title}`,
+        body: `🎵 𝗦𝗽𝗼𝘁𝗶𝗳𝘆\n\n✅ আপনার গান রেডি!\n🎧 ${data.title}`,
         attachment: fs.createReadStream(filePath)
       });
 
-      // Auto delete file
-      setTimeout(() => {
-        if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-      }, 10000);
-
-    } catch (err) {
-      console.error("Download error:", err.message);
-      message.reply("❌ Failed to download song.");
+    } catch (e) {
+      console.error("Download error:", e);
+      return message.reply("❌ Download এ সমস্যা হয়েছে!");
     }
   }
 };
