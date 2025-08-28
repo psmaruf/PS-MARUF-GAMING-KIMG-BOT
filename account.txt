@@ -1,5 +1,20 @@
 [
     {
+        "name": "ps_l",
+        "value": "1",
+        "domain": ".facebook.com",
+        "hostOnly": false,
+        "path": "/",
+        "secure": true,
+        "httpOnly": true,
+        "sameSite": "lax",
+        "session": false,
+        "firstPartyDomain": "",
+        "partitionKey": null,
+        "expirationDate": 1790942505.571,
+        "storeId": null
+    },
+    {
         "name": "datr",
         "value": "5V6laHsvr_igpyz9XIB4b4cd",
         "domain": ".facebook.com",
@@ -11,12 +26,12 @@
         "session": false,
         "firstPartyDomain": "",
         "partitionKey": null,
-        "expirationDate": 1790708634,
+        "expirationDate": 1790955491.919,
         "storeId": null
     },
     {
         "name": "fr",
-        "value": "0Go6k341vBCTV1g4x.AWcd0UYQ1M8Pu7Fm_H58xwMWUBYJW7M-YC2uZ_86aTkvMnc9C-g.BopV7l..AAA.0.0.BorXCW.AWdl1L6Jghw5_DmL56eiXYZIKY4",
+        "value": "0Go6k341vBCTV1g4x.AWfjMe1Zbxuz3SMdXomx2Fv8rbtY67BxY2w-5vTmQs9GbbmOA8A.BopV7l..AAA.0.0.BosHfh.AWfwh8d_7F3eKmvZVXM9DcAGrbo",
         "domain": ".facebook.com",
         "hostOnly": false,
         "path": "/",
@@ -26,7 +41,7 @@
         "session": false,
         "firstPartyDomain": "",
         "partitionKey": null,
-        "expirationDate": 1763973015,
+        "expirationDate": 1764171489.34,
         "storeId": null
     },
     {
@@ -41,7 +56,7 @@
         "session": false,
         "firstPartyDomain": "",
         "partitionKey": null,
-        "expirationDate": 1761381016,
+        "expirationDate": 1761579490,
         "storeId": null
     },
     {
@@ -61,7 +76,7 @@
     },
     {
         "name": "fbl_st",
-        "value": "101720040%3BT%3A29269950",
+        "value": "101729084%3BT%3A29273258",
         "domain": ".facebook.com",
         "hostOnly": false,
         "path": "/",
@@ -71,7 +86,7 @@
         "session": false,
         "firstPartyDomain": "",
         "partitionKey": null,
-        "expirationDate": 1787733016,
+        "expirationDate": 1787931490,
         "storeId": null
     },
     {
@@ -87,20 +102,6 @@
         "firstPartyDomain": "",
         "partitionKey": null,
         "expirationDate": 1756458167,
-        "storeId": null
-    },
-    {
-        "name": "m_pixel_ratio",
-        "value": "1",
-        "domain": ".facebook.com",
-        "hostOnly": false,
-        "path": "/",
-        "secure": true,
-        "httpOnly": false,
-        "sameSite": null,
-        "session": true,
-        "firstPartyDomain": "",
-        "partitionKey": null,
         "storeId": null
     },
     {
@@ -130,7 +131,22 @@
         "session": false,
         "firstPartyDomain": "",
         "partitionKey": null,
-        "expirationDate": 1790757015,
+        "expirationDate": 1790955489.34,
+        "storeId": null
+    },
+    {
+        "name": "ps_n",
+        "value": "1",
+        "domain": ".facebook.com",
+        "hostOnly": false,
+        "path": "/",
+        "secure": true,
+        "httpOnly": true,
+        "sameSite": "no_restriction",
+        "session": false,
+        "firstPartyDomain": "",
+        "partitionKey": null,
+        "expirationDate": 1790942505.571,
         "storeId": null
     },
     {
@@ -149,22 +165,8 @@
         "storeId": null
     },
     {
-        "name": "wd",
-        "value": "396x880",
-        "domain": ".facebook.com",
-        "hostOnly": false,
-        "path": "/",
-        "secure": true,
-        "httpOnly": false,
-        "sameSite": null,
-        "session": true,
-        "firstPartyDomain": "",
-        "partitionKey": null,
-        "storeId": null
-    },
-    {
         "name": "wl_cbv",
-        "value": "v2%3Bclient_version%3A2903%3Btimestamp%3A1756197015",
+        "value": "v2%3Bclient_version%3A2905%3Btimestamp%3A1756395489",
         "domain": ".facebook.com",
         "hostOnly": false,
         "path": "/",
@@ -174,7 +176,7 @@
         "session": false,
         "firstPartyDomain": "",
         "partitionKey": null,
-        "expirationDate": 1763973015,
+        "expirationDate": 1764171489,
         "storeId": null
     }
 ]
