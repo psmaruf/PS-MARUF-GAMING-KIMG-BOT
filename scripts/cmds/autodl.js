@@ -9,8 +9,8 @@ const baseApiUrl = async () => {
 const config = {
   name: "autodl",
   version: "2.0",
-  author: "Father Rahad",
-  credits: "Dipto Modified by Rahad",
+  author: "Rahad",
+  credits: "Rahad",
   description: "Auto download video from TikTok, Facebook, Instagram, YouTube, and more",
   category: "media",
   commandCategory: "media",
@@ -40,18 +40,18 @@ const onChat = async ({ api, event }) => {
       dipto.startsWith("https://vm.tiktok.com") ||
       dipto.startsWith("https://fb.watch")
     ) {
-      api.setMessageReaction("⌛", event.messageID, {}, true);
-      const w = await api.sendMessage("⏳ 𝗣𝗹𝗲𝗮𝘀𝗲 𝘄𝗮𝗶𝘁 𝗯𝗮𝗯𝘆... 😘", event.threadID);
+      api.setMessageReaction("🐸", event.messageID, {}, true);
+      const w = await api.sendMessage("🐸 𝗣𝗹𝗲𝗮𝘀𝗲 𝘄𝗮𝗶𝘁 𝗯𝗮𝗯𝘆... 🫡", event.threadID);
 
       const response = await axios.get(`${await baseApiUrl()}/alldl?url=${encodeURIComponent(dipto)}`);
       const d = response.data;
 
       if (d.result.includes(".jpg")) {
-        ex = ".jpg"; cp = "💌 𝗛𝗲𝗿𝗲'𝘀 𝘆𝗼𝘂𝗿 𝗽𝗵𝗼𝘁𝗼 🥵";
+        ex = ".jpg"; cp = "💌 𝗛𝗲𝗿𝗲'𝘀 𝘆𝗼𝘂𝗿 𝗽𝗵𝗼𝘁𝗼 🥰";
       } else if (d.result.includes(".png")) {
-        ex = ".png"; cp = "💌 𝗛𝗲𝗿𝗲'𝘀 𝘆𝗼𝘂𝗿 𝗽𝗵𝗼𝘁𝗼 🥵";
+        ex = ".png"; cp = "💌 𝗛𝗲𝗿𝗲'𝘀 𝘆𝗼𝘂𝗿 𝗽𝗵𝗼𝘁𝗼 🥰";
       } else if (d.result.includes(".jpeg")) {
-        ex = ".jpeg"; cp = "💌 𝗛𝗲𝗿𝗲'𝘀 𝘆𝗼𝘂𝗿 𝗽𝗵𝗼𝘁𝗼 🥵";
+        ex = ".jpeg"; cp = "💌 𝗛𝗲𝗿𝗲'𝘀 𝘆𝗼𝘂𝗿 𝗽𝗵𝗼𝘁𝗼 🥰";
       } else {
         ex = ".mp4"; cp = "🎬 𝗩𝗶𝗱𝗲𝗼 𝗱𝗼𝘄𝗻𝗹𝗼𝗮𝗱𝗲𝗱 💞";
       }
@@ -67,14 +67,14 @@ const onChat = async ({ api, event }) => {
 
       await api.sendMessage({
         body: `
-╭─〔 👑 𝗙𝗔𝗧𝗛𝗘𝗥 𝗥𝗔𝗛𝗔𝗗 𝗗𝗟 𝗦𝗬𝗦𝗧𝗘𝗠 👑 〕─╮
+╭─〔 ☠️ ༒•ℛ𓂅⋈𓂅ᯅ•༒ 𝗦𝗬𝗦𝗧𝗘𝗠 ☠️ 〕─╮
 
 ${cp}
 
 📎 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗 𝗟𝗜𝗡𝗞:
 ${shortLink}
 
-🔰 𝗣𝗼𝘄𝗲𝗿𝗲𝗱 𝗯𝘆 𝗥𝗔𝗛𝗔𝗗 𝗕𝗢𝗧 💚
+☠️ 𝗣𝗼𝘄𝗲𝗿𝗲𝗱 𝗯𝘆 ★彡༒•❄️𝗥𝗮𝗵𝗮𝘁❄️•༒彡★
 ╰─────────────⭓`,
         attachment: fs.createReadStream(path)
       }, event.threadID, () => fs.unlinkSync(path), event.messageID);
