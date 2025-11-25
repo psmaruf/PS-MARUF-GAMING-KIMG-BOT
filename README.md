@@ -3,7 +3,7 @@
 </p>
 
 <h1 align="center">
-  🔧💥 𝙍𝘼𝙃𝘼𝘿 - 𝙓𝘼𝙎𝙎 𝘽𝙊𝙏 💥🔧
+  🔧💥 PS MARUF GAMING  💥🔧
 </h1>
 
 <h3 align="center">
